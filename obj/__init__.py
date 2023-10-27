@@ -3,11 +3,12 @@
 # pylint: disable=C0112,C0115,C0116,W0105,R0902,R0903,E0402,C0411,W0622,W0102
 
 
-"clean namespace"
+"a clean namespace"
 
 
 import datetime
 import json
+import os
 import _thread
 
 
@@ -16,6 +17,7 @@ def __dir__():
             'Object',
             'construct',
             'fqn',
+            'ident',
             'items',
             'keys',
             'read',
@@ -209,6 +211,3 @@ def write(obj, pth) -> None:
     with lock:
         with open(pth, 'w', encoding='utf-8') as ofile:
             dump(obj, ofile)
-
-
-from .func import *
