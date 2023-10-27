@@ -7,3 +7,7 @@
 
 
 from .spec import *
+from .spec import  __dir__
+
+
+__all__ = __dir__()
