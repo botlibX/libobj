@@ -6,13 +6,13 @@
 "clean namespace"
 
 
+import datetime
 import json
 import _thread
 
 
 def __dir__():
     return (
-            'Default',
             'Object',
             'construct',
             'fqn',
@@ -75,6 +75,13 @@ def fqn(obj) -> str:
     if kin == "type":
         kin = obj.__name__
     return kin
+
+
+def ident(obj) -> str:
+    return os.path.join(
+                        fqn(obj),
+                        os.path.join(*str(datetime.datetime.now()).split())
+                       )
 
 
 def items(obj) -> []:
@@ -202,15 +209,3 @@ def write(obj, pth) -> None:
     with lock:
         with open(pth, 'w', encoding='utf-8') as ofile:
             dump(obj, ofile)
-
-
-class Default(Object):
-
-    __slots__ = ("__default__",)
-
-    def __init__(self):
-        Object.__init__(self)
-        self.__default__ = ""
-
-    def __getattr__(self, key):
-        return self.__dict__.get(key, self.__default__)
