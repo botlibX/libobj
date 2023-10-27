@@ -17,7 +17,11 @@ def __dir__():
             'edit',
             'fmt',
             'ident',
+            'name',
            )
+
+
+__all__ = __dir__()
 
 
 def edit(obj, setter, skip=False) -> None:

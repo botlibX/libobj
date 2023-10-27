@@ -16,11 +16,13 @@ from .disk   import Storage, fetch, strip
 
 def __dir__():
     return (
-            "find",
-            "fns",
-            "fntime",
-            "last"
+            'find',
+            'fntime',
+            'last'
            )
+
+
+__all__ = __dir__()
 
 
 def find(mtc, selector=None) -> []:
