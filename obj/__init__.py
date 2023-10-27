@@ -209,3 +209,6 @@ def write(obj, pth) -> None:
     with lock:
         with open(pth, 'w', encoding='utf-8') as ofile:
             dump(obj, ofile)
+
+
+from .func import *
