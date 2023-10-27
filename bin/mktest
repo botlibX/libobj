@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+# This file is placed in the Public Domain.
+#
+#
+
+
+"create unittests"
+
+
+from obj import *
+
+
+TXT = """# This file is placed in the Public Domain.
+#
+#
+
+
+import obj
+import unittest
+
+
+class Test(unittest.TestCase):
+
+"""
+
+
+for name in dir(obj):
+    o = getattr(obj, name)
+    #print(o)
+    #print(dir(o))
+    if "__code__" in dir(o):
+        c = o.__code__
+        #print(dir(c))
+        #print(c.co_argcount) 
+        #print(c.co_varnames)
+        txt = ""
+        for i in range(c.co_argcount):
+            arg = c.co_varnames[i]
+            txt += f"{arg},"
+        txt = txt[:-1]
+        TXT += f"    def test_{o.__name__}({txt}):"
+        TXT += "\n"
+        TXT += "        pass"
+        TXT += "\n\n"
+
+print(TXT)
