@@ -17,9 +17,9 @@ basic usage is this:
     >>> from obj import Object, read, write
     >>> o = Object()
     >>> o.a = "b"
-    >>> write(o, "test")
+    >>> write(o, "test1")
     >>> oo = Object()
-    >>> read(oo, "test")
+    >>> read(oo, "test1")
     >>> oo
     {"a": "b"}
 
