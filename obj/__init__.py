@@ -67,6 +67,21 @@ class Object:
         return str(self.__dict__)
 
 
+"default"
+
+
+class Default(Object):
+
+    __slots__ = ("__default__",)
+
+    def __init__(self):
+        Object.__init__(self)
+        self.__default__ = ""
+
+    def __getattr__(self, key):
+        return self.__dict__.get(key, self.__default__)
+
+
 "decoding"
 
 
