@@ -10,7 +10,6 @@ import unittest
 
 
 from obj import *
-from obj.methods import fmt
 
 
 VALIDJSON = '{"test": "bla"}'
@@ -145,10 +144,6 @@ class TestObject(unittest.TestCase):
     def test_str(self):
         obj = Object()
         self.assertEqual(str(obj), "{}")
-
-    def test_fmt(self):
-        obj = Object()
-        self.assertEqual(fmt(obj), "")
 
     def test_getattr(self):
         obj = Object()

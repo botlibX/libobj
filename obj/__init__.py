@@ -29,9 +29,9 @@ this package is a Work In Progress (WIP).
 """
 
 
-import datetime
-import json
 import os
+import pathlib
+import json
 import _thread
 
 
@@ -49,19 +49,10 @@ def __dir__():
            )
 
 
-from .utility import cdir
-
-
 lock = _thread.allocate_lock()
 
 
 class Object:
-
-    def __delitem__(self, key):
-        return self.__dict__.__delitem__(key)
-
-    def __getitem__(self, key):
-        return self.__dict__.__getitem__(key)
 
     def __iter__(self):
         return iter(self.__dict__)
@@ -72,60 +63,11 @@ class Object:
     def __repr__(self):
         return dumps(self)
 
-    def __setitem__(self, key, value):
-        return self.__dict__.__setitem__(key, value)
-
     def __str__(self):
         return str(self.__dict__)
 
 
-def construct(obj, *args, **kwargs) -> None:
-    if args:
-        val = args[0]
-        if isinstance(val, zip):
-            update(obj, dict(val))
-        elif isinstance(val, dict):
-            update(obj, val)
-        elif isinstance(val, Object):
-            update(obj, vars(val))
-    if kwargs:
-        update(obj, kwargs)
-
-
-def items(obj) -> []:
-    if isinstance(obj, type({})):
-        return obj.items()
-    return obj.__dict__.items()
-
-
-def keys(obj) -> []:
-    if isinstance(obj, type({})):
-        return obj.keys()
-    return obj.__dict__.keys()
-
-
-def search(obj, selector) -> bool:
-    res = False
-    for key, value in items(selector):
-        if key not in obj:
-            res = False
-            break
-        val = obj[key]
-        if str(value) in str(val):
-            res = True
-            break
-    return res
-
-
-def update(obj, data, empty=True) -> None:
-    for key, value in items(data):
-        if empty and not value:
-            continue
-        obj[key] = value
-
-
-def values(obj) -> []:
-    return obj.__dict__.values()
+"decoding"
 
 
 class ObjectDecoder(json.JSONDecoder):
@@ -165,6 +107,9 @@ def read(obj, pth) -> None:
     with lock:
         with open(pth, 'r', encoding='utf-8') as ofile:
             update(obj, load(ofile))
+
+
+"encoding"
 
 
 class ObjectEncoder(json.JSONEncoder):
@@ -218,3 +163,63 @@ def write(obj, pth) -> None:
         cdir(os.path.dirname(pth))
         with open(pth, 'w', encoding='utf-8') as ofile:
             dump(obj, ofile)
+
+"utility"
+
+
+def cdir(pth) -> None:
+    pth = pathlib.Path(pth)
+    os.makedirs(pth, exist_ok=True)
+
+
+"methods"
+
+
+def construct(obj, *args, **kwargs) -> None:
+    if args:
+        val = args[0]
+        if isinstance(val, zip):
+            update(obj, dict(val))
+        elif isinstance(val, dict):
+            update(obj, val)
+        elif isinstance(val, Object):
+            update(obj, vars(val))
+    if kwargs:
+        update(obj, kwargs)
+
+
+def items(obj) -> []:
+    if isinstance(obj, type({})):
+        return obj.items()
+    return obj.__dict__.items()
+
+
+def keys(obj) -> []:
+    if isinstance(obj, type({})):
+        return obj.keys()
+    return obj.__dict__.keys()
+
+
+
+def search(obj, selector) -> bool:
+    res = False
+    for key, value in items(selector):
+        if key not in obj:
+            res = False
+            break
+        val = getattr(obj, key, None)
+        if val and str(value) in str(val):
+            res = True
+            break
+    return res
+
+
+def update(obj, data, empty=True) -> None:
+    for key, value in items(data):
+        if empty and not value:
+            continue
+        setattr(obj, key, value)
+
+
+def values(obj) -> []:
+    return obj.__dict__.values()
