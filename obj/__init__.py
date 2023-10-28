@@ -3,7 +3,7 @@
 # pylint: disable=C0112,C0115,C0116,W0105,R0902,R0903,E0402,C0411,W0622,W0102
 
 
-"""A clean namespace
+"""a clean namespace
 
 This package provides a Object class that can be written to
 and read from disk. To provide a clean namespace to load json
@@ -27,6 +27,7 @@ basic usage is this:
 this package is a Work In Progress (WIP).
 
 """
+
 
 import datetime
 import json
