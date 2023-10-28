@@ -17,9 +17,9 @@ basic usage is this:
     >>> from obj import Object, read, write
     >>> o = Object()
     >>> o.a = "b"
-    >>> write(o, "test1")
+    >>> write(o, ".test/testing")
     >>> oo = Object()
-    >>> read(oo, "test1")
+    >>> read(oo, ".test/testing")
     >>> oo
     {"a": "b"}
 
@@ -47,6 +47,9 @@ def __dir__():
             'values',
             'write'
            )
+
+
+from .utility import cdir
 
 
 lock = _thread.allocate_lock()
@@ -211,5 +214,6 @@ def dumps(*args, **kw) -> str:
 
 def write(obj, pth) -> None:
     with lock:
+        cdir(os.path.dirname(pth))
         with open(pth, 'w', encoding='utf-8') as ofile:
             dump(obj, ofile)
