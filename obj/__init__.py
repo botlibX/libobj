@@ -200,7 +200,6 @@ def keys(obj) -> []:
     return obj.__dict__.keys()
 
 
-
 def search(obj, selector) -> bool:
     res = False
     for key, value in items(selector):
