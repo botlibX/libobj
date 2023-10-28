@@ -9,14 +9,13 @@
 import os
 
 
-from .objects import fqn, items, keys
+from . import items, keys
 
 
 def __dir__():
     return (
             'edit',
             'fmt',
-            'ident',
             'name',
            )
 
@@ -64,13 +63,6 @@ def fmt(obj, args=None, skip=None) -> str:
         else:
             txt += f'{key}={value} '
     return txt.strip()
-
-
-def ident(obj) -> str:
-    return os.path.join(
-                        fqn(obj),
-                        os.path.join(*str(datetime.datetime.now()).split())
-                       )
 
 
 def name(obj) -> str:
