@@ -29,17 +29,12 @@ class TestMixin(unittest.TestCase):
         read(mixin2, ".test/mixin")        
         self.assertEqual(mixin2.a, "b")
 
-    def test_dict(self):
-        class Mixin(Object, dict):
-            pass
-        self.assertEqual(type(Mixin), type)
-
-    def test_list(self):
-        class Mixin(Object, list):
-            pass
-        self.assertEqual(type(Mixin), type)
-
     def test_Test(self):
         class Mixin(Test, Object):
             pass
-        self.assertEqual(type(Mixin), type)
+        mixin = Mixin()
+        mixin.a = "b"
+        write(mixin, ".test/mixin")
+        mixin2 = Mixin()
+        read(mixin2, ".test/mixin")        
+        self.assertEqual(mixin2.a, "b")

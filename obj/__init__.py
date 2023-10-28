@@ -75,13 +75,14 @@ class Object:
     def __setitem__(self, key, value):
         return self.__dict__.__setitem__(key, value)
 
+    def __str__(self):
+        return str(self.__dict__)
+
 
 def construct(obj, *args, **kwargs) -> None:
     if args:
         val = args[0]
-        if isinstance(val, list):
-            update(obj, dict(val))
-        elif isinstance(val, zip):
+        if isinstance(val, zip):
             update(obj, dict(val))
         elif isinstance(val, dict):
             update(obj, val)
