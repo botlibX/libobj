@@ -10,8 +10,8 @@ import os
 import time
 
 
-from .       import Object, keys, search, update
-from .disk   import Storage, fetch, fqn, strip
+from .object  import Object, keys, search, update
+from .storage import Storage, fetch, fqn, strip
 
 
 def __dir__():
