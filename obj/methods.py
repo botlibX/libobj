@@ -6,7 +6,7 @@
 "object functions"
 
 
-import os
+import types
 
 
 from . import items, keys

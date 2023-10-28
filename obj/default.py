@@ -6,7 +6,7 @@
 "clean namespace"
 
 
-from .objects import Object
+from . import Object
 
 
 def __dir__():

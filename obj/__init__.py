@@ -3,8 +3,30 @@
 # pylint: disable=C0112,C0115,C0116,W0105,R0902,R0903,E0402,C0411,W0622,W0102
 
 
-"a clean namespace"
+"""A clean namespace
 
+This package provides a Object class that can be written to
+and read from disk. To provide a clean namespace to load json
+data into, this class is without any methods defined on it and
+methods are provided as functions taking an object as the first
+argument.
+
+basic usage is this:
+
+
+    >>> from obj import Object, read, write
+    >>> o = Object()
+    >>> o.a = "b"
+    >>> write(o, "test")
+    >>> oo = Object()
+    >>> read(oo, "test")
+    >>> oo
+    {"a": "b"}
+
+
+this package is a Work In Progress (WIP).
+
+"""
 
 import datetime
 import json
@@ -30,11 +52,6 @@ lock = _thread.allocate_lock()
 
 
 class Object:
-
-    __slots__ = ('__dict__', '__fnm__')
-
-    def __init__(self):
-        self.__fnm__ = None
 
     def __delitem__(self, key):
         return self.__dict__.__delitem__(key)
