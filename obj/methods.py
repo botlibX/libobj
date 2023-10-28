@@ -9,7 +9,7 @@
 import os
 
 
-from . import fqn, items, keys
+from .objects import fqn, items, keys
 
 
 def __dir__():
