@@ -1,28 +1,198 @@
 #!/usr/bin/env python3
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C0115,C0116,C0209,W0212
+# pylint: disable=C0115,C0116,E0402,W0718,W0212,W0613,W0702
 
 
-"mailbox"
+"handler"
 
 
-import mailbox
+import inspect
 import os
+import queue
 import sys
-import time
+import threading
+import _thread
 
 
 sys.path.insert(0, os.getcwd())
 
 
-from obj         import Default, Object, find, fmt, fntime, parse, sync, update
-from obj.storage import Storage
-from obj.handler import Broker, Handler
-from obj.utils   import laps
+from obj import Default, Object, Storage
+
+
+def __dir__():
+    return (
+            'Broker',
+            'Event',
+            'Handler',
+           )
 
 
 Cfg = Default()
+
+
+class Handler(Object):
+
+    def __init__(self):
+        Object.__init__(self)
+        self.cmds    = Object()
+        self.queue   = queue.Queue()
+        self.stopped = threading.Event()
+        Broker.add(self)
+
+    def add(self, func) -> None:
+        setattr(self.cmds, func.__name__, func)
+
+    def announce(self, txt) -> None:
+        self.raw(txt)
+
+    def dosay(self, channel, txt) -> None:
+        self.raw(txt)
+
+    def event(self, txt):
+        evt = Event()
+        evt.txt = txt
+        evt.orig = object.__repr__(self)
+        return evt
+
+    def forever(self) -> None:
+        try:
+            self.stopped.wait()
+        except:
+            _thread.interrupt_main()
+
+    def dispatch(self, evt) -> None:
+        func = getattr(self.cmds, evt.cmd, None)
+        if not func:
+            return
+        func(evt)
+        evt.show()
+
+    def loop(self) -> None:
+        while not self.stopped.is_set():
+            try:
+                self.dispatch(self.poll())
+            except (KeyboardInterrupt, EOFError):
+                _thread.interrupt_main()
+
+    def poll(self):
+        return self.queue.get()
+
+    def put(self, evt) -> None:
+        self.queue.put_nowait(evt)
+
+    def raw(self, txt) -> None:
+        pass
+
+    def start(self) -> None:
+        self.loop()
+
+    def stop(self) -> None:
+        self.stopped.set()
+
+
+class Event(Default):
+
+    def __init__(self):
+        Default.__init__(self)
+        self.channel = ""
+        self.orig    = ""
+        self.result  = []
+        self.txt     = ""
+
+    def reply(self, txt) -> None:
+        self.result.append(txt)
+
+    def show(self) -> None:
+        for txt in self.result:
+            Broker.say(self.orig, self.channel, txt)
+
+
+class Broker(Object):
+
+    objs = []
+
+    @staticmethod
+    def add(obj) -> None:
+        Broker.objs.append(obj)
+
+    @staticmethod
+    def announce(txt) -> None:
+        for obj in Broker.objs:
+            obj.announce(txt)
+
+    @staticmethod
+    def byorig(orig) -> Object:
+        for obj in Broker.objs:
+            if object.__repr__(obj) == orig:
+                return obj
+        return None
+
+    @staticmethod
+    def remove(obj) -> None:
+        try:
+            Broker.objs.remove(obj)
+        except ValueError:
+            pass
+
+    @staticmethod
+    def say(orig, channel, txt) -> None:
+        bot = Broker.byorig(orig)
+        if not bot:
+            return
+        bot.dosay(channel, txt)
+
+
+def parse(obj, txt=None) -> None:
+    args = []
+    obj.args    = obj.args or []
+    obj.cmd     = obj.cmd or ""
+    obj.gets    = obj.gets or Default()
+    obj.hasmods = obj.hasmod or False
+    obj.mod     = obj.mod or ""
+    obj.opts    = obj.opts or ""
+    obj.result  = obj.reult or []
+    obj.sets    = obj.sets or Default()
+    obj.otxt    = txt or obj.txt or ""
+    _nr = -1
+    for spli in obj.otxt.split():
+        if spli.startswith("-"):
+            try:
+                obj.index = int(spli[1:])
+            except ValueError:
+                obj.opts += spli[1:]
+            continue
+        if "=" in spli:
+            key, value = spli.split("=", maxsplit=1)
+            if key == "mod":
+                obj.hasmods = True
+                if obj.mod:
+                    obj.mod += f",{value}"
+                else:
+                    obj.mod = value
+                continue
+            setattr(obj.sets, key, value)
+            continue
+        if "==" in spli:
+            key, value = spli.split("==", maxsplit=1)
+            setattr(obj.gets, key, value)
+            continue
+        _nr += 1
+        if _nr == 0:
+            obj.cmd = spli
+            continue
+        args.append(spli)
+    if args:
+        obj.args = args
+        obj.txt  = obj.cmd or ""
+        obj.rest = " ".join(obj.args)
+        obj.txt  = obj.cmd + " " + obj.rest
+    else:
+        obj.txt = obj.cmd or ""
+
+
+"mailbox"
 
 
 bdmonths = [
@@ -61,7 +231,8 @@ monthint = {
 class CLI(Handler):
 
     def raw(self, txt):
-        print(txt)
+        print(txt.encode('utf-8', 'replace').decode())
+
 
 
 class Email(Default):
@@ -135,10 +306,10 @@ def email(event):
         event.reply("email <txt>")
         return
     nrs = -1
-    for fnm, email in find("email"):
-        if event.rest in email.text:
+    for fnm, eml in find("email"):
+        if event.rest in eml.text:
             nrs += 1
-            txt = fmt(email, ["From", "Subject"])
+            txt = fmt(eml, ["From", "Subject"], plain=True)
             lsp = laps(time.time() - fntime(fnm))
             event.reply(f"{nrs} {txt} {lsp}")
 

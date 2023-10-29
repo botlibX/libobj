@@ -10,7 +10,7 @@ import os
 import time
 
 
-from .object  import Default, Object, keys, search, update
+from .object  import Default, keys, search, update
 from .storage import Storage, fetch, fqn, strip
 
 
