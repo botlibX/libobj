@@ -1,0 +1,187 @@
+#!/usr/bin/env python3
+# This file is placed in the Public Domain.
+#
+# pylint: disable=C0115,C0116,C0209,W0212
+
+
+"mailbox"
+
+
+import mailbox
+import os
+import sys
+import time
+
+
+sys.path.insert(0, os.getcwd())
+
+
+from obj         import Default, Object, find, fmt, fntime, parse, sync, update
+from obj.storage import Storage
+from obj.handler import Broker, Handler
+from obj.utils   import laps
+
+
+Cfg = Default()
+
+
+bdmonths = [
+            'Bo',
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec'
+           ]
+
+
+monthint = {
+            'Jan': 1,
+            'Feb': 2,
+            'Mar': 3,
+            'Apr': 4,
+            'May': 5,
+            'Jun': 6,
+            'Jul': 7,
+            'Aug': 8,
+            'Sep': 9,
+            'Oct': 10,
+            'Nov': 11,
+            'Dec': 12
+           }
+
+
+class CLI(Handler):
+
+    def raw(self, txt):
+        print(txt)
+
+
+class Email(Default):
+
+    pass
+
+
+Storage.add(Email)
+
+
+def to_date(date):
+    date = date.replace("_", ":")
+    res = date.split()
+    ddd = ""
+    try:
+        if "+" in res[3]:
+            raise ValueError
+        if "-" in res[3]:
+            raise ValueError
+        int(res[3])
+        ddd = "{:4}-{:#02}-{:#02} {:6}".format(res[3], monthint[res[2]], int(res[1]), res[4])
+    except (IndexError, KeyError, ValueError) as ex:
+        try:
+            if "+" in res[4]:
+                raise ValueError from ex
+            if "-" in res[4]:
+                raise ValueError from ex
+            int(res[4])
+            ddd = "{:4}-{:#02}-{:02} {:6}".format(res[4], monthint[res[1]], int(res[2]), res[3])
+        except (IndexError, KeyError, ValueError):
+            try:
+                ddd = "{:4}-{:#02}-{:02} {:6}".format(res[2], monthint[res[1]], int(res[0]), res[3])
+            except (IndexError, KeyError):
+                try:
+                    ddd = "{:4}-{:#02}-{:02}".format(res[2], monthint[res[1]], int(res[0]))
+                except (IndexError, KeyError):
+                    try:
+                        ddd = "{:4}-{:#02}".format(res[2], monthint[res[1]])
+                    except (IndexError, KeyError):
+                        try:
+                            ddd = "{:4}".format(res[2])
+                        except (IndexError, KeyError):
+                            ddd = ""
+    return ddd
+
+
+def cmd(event):
+    bot = Broker.byorig(event.orig)
+    event.reply(",".join(sorted(bot.cmds))) 
+
+
+def cor(event):
+    if not event.args:
+        event.reply("cor <email>")
+        return
+    nrs = -1
+    for fnm, email in find("email", {"From": event.args[0]}):
+        nrs += 1
+        txt = ""
+        if len(event.args) > 1:
+            args = event.args[1:]
+        else:
+            args = ["From","Subject"]
+        lsp = laps(time.time() - fntime(fnm))
+        txt = fmt(email, args, plain=True)
+        event.reply(f"{nrs} {txt} {lsp}")
+
+
+def email(event):
+    if not event.args:
+        event.reply("email <txt>")
+        return
+    nrs = -1
+    for fnm, email in find("email"):
+        if event.rest in email.text:
+            nrs += 1
+            txt = fmt(email, ["From", "Subject"])
+            lsp = laps(time.time() - fntime(fnm))
+            event.reply(f"{nrs} {txt} {lsp}")
+
+
+def scan(event):
+    if not event.args:
+        event.reply("scan <path>")
+        return
+    path = os.path.expanduser(event.args[0])
+    event.reply(f"reading from {path}")
+    nrs = 0
+    if os.path.isdir(path):
+        thing = mailbox.Maildir(path, create=False)
+    elif os.path.isfile(path):
+        thing = mailbox.mbox(path, create=False)
+    else:
+        return
+    try:
+        thing.lock()
+    except FileNotFoundError:
+        pass
+    for mail in thing:
+        email = Email()
+        update(email, dict(mail._headers))
+        email.text = ""
+        for payload in mail.walk():
+            if payload.get_content_type() == 'text/plain':
+                email.text += payload.get_payload()
+        email.text = email.text.replace("\\n", "\n")
+        sync(email)
+        nrs += 1
+    if nrs:
+        event.reply(f"ok {nrs}")
+
+
+if __name__ == "__main__":
+    parse(Cfg, " ".join(sys.argv[1:]))
+    cli = CLI()
+    cli.add(cmd)
+    cli.add(cor)
+    cli.add(email)
+    cli.add(scan)
+    evt = cli.event(Cfg.otxt)
+    parse(evt)
+    cli.dispatch(evt)
+    

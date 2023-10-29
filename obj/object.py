@@ -101,7 +101,7 @@ def hook(objdict, typ=None) -> Object:
     if typ:
         obj = typ()
     else:
-        obj = Object()
+        obj = Default()
     construct(obj, objdict)
     return obj
 

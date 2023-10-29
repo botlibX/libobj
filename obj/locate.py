@@ -10,7 +10,7 @@ import os
 import time
 
 
-from .object  import Object, keys, search, update
+from .object  import Default, Object, keys, search, update
 from .storage import Storage, fetch, fqn, strip
 
 
@@ -28,7 +28,7 @@ def find(mtc, selector=None) -> []:
         selector = {}
     clz = Storage.long(mtc)
     for fnm in reversed(sorted(fns(clz), key=fntime)):
-        obj = Object()
+        obj = Default()
         fetch(obj, fnm)
         if '__deleted__' in obj:
             continue
@@ -37,7 +37,7 @@ def find(mtc, selector=None) -> []:
         yield (fnm, obj)
 
 
-def fmt(obj, args=None, skip=None) -> str:
+def fmt(obj, args=None, skip=None, plain=False) -> str:
     if args is None:
         args = keys(obj)
     if skip is None:
@@ -46,11 +46,12 @@ def fmt(obj, args=None, skip=None) -> str:
     for key in sorted(args):
         if key in skip:
             continue
-        try:
-            value = obj[key]
-        except KeyError:
+        value = getattr(obj, key, None)
+        if value is None:
             continue
-        if isinstance(value, str) and len(value.split()) >= 2:
+        if plain:
+            txt += f"{value} "
+        elif isinstance(value, str) and len(value.split()) >= 2:
             txt += f'{key}="{value}" '
         else:
             txt += f'{key}={value} '
