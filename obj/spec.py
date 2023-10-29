@@ -9,3 +9,4 @@
 from .storage import *
 from .locate  import *
 from .object  import *
+from .utils   import *

@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C0115,C0116,E0611
+# pylint: disable=C0115,C0116,E0611,R0903
 
 
 "mixin"
@@ -19,22 +19,12 @@ class Test:
 
 class TestMixin(unittest.TestCase):
 
-    def test_object(self):
-        class Mixin(Object, object):
-            pass
-        mixin = Mixin()
-        mixin.a = "b"
-        write(mixin, ".test/mixin")
-        mixin2 = Mixin()
-        read(mixin2, ".test/mixin")        
-        self.assertEqual(mixin2.a, "b")
-
-    def test_Test(self):
+    def test_mixin(self):
         class Mixin(Test, Object):
             pass
         mixin = Mixin()
-        mixin.a = "b"
+        mixin.aaa = "b"
         write(mixin, ".test/mixin")
         mixin2 = Mixin()
-        read(mixin2, ".test/mixin")        
-        self.assertEqual(mixin2.a, "b")
+        read(mixin2, ".test/mixin")
+        self.assertEqual(mixin2.aaa, "b")
