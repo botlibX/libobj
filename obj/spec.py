@@ -10,3 +10,20 @@ from .locate  import *
 from .object  import *
 from .storage import *
 from .utils   import *
+
+
+def __dir__():
+    return (
+        'Object',
+        'construct',
+        'edit',
+        'fqn',
+        'ident',
+        'items',
+        'keys',
+        'read',
+        'search',
+        'update',
+        'values',
+        'write'
+    )
