@@ -124,8 +124,7 @@ class TestObject(unittest.TestCase):
         self.assertEqual(len(obj), 0)
 
     def test_module(self):
-        self.assertEqual(Object().__module__, "obj")
-
+        self.assertEqual(Object().__module__, "obj.object")
 
     def test_repr(self):
         self.assertTrue(
