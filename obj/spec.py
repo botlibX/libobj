@@ -6,7 +6,7 @@
 "specification"
 
 
-from .storage import *
 from .locate  import *
 from .object  import *
+from .storage import *
 from .utils   import *
