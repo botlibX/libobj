@@ -62,7 +62,6 @@ class Email(Default):
 Storage.add(Email)
 
 
-
 Cfg = Default()
 
 
