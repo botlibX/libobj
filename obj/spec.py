@@ -19,10 +19,10 @@ def __dir__():
         'edit',
         'fqn',
         'ident',
-        'items',
         'keys',
         'read',
         'search',
+        'items',
         'update',
         'values',
         'write'
