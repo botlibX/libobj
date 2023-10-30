@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C0115,C0116,E0402,W0718,W0212,W0613,W0702,C0413
-# pylint: disable=W0105,W0201,R0903,C0209,C0411
+#
 
 
-"handler"
+"mailbox"
 
 
+import mailbox
 import os
 import queue
 import sys
@@ -19,87 +19,77 @@ import _thread
 sys.path.insert(0, os.getcwd())
 
 
-from obj import Default, Object, Storage, update
-from obj import find, fntime, fmt, laps, sync
+from obj import Default, Object, Storage, find, fmt, fntime, laps
 
 
-def __dir__():
-    return (
-            'Broker',
-            'Event',
-            'Handler',
-           )
+
+bdmonths = [
+            'Bo',
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec'
+           ]
+
+
+monthint = {
+            'Jan': 1,
+            'Feb': 2,
+            'Mar': 3,
+            'Apr': 4,
+            'May': 5,
+            'Jun': 6,
+            'Jul': 7,
+            'Aug': 8,
+            'Sep': 9,
+            'Oct': 10,
+            'Nov': 11,
+            'Dec': 12
+           }
+
+
+
+class Email(Default):
+
+    pass
+
+
+Storage.add(Email)
+
 
 
 Cfg = Default()
 
 
-class Handler(Object):
+class CLI:
 
-    def __init__(self):
-        Object.__init__(self)
-        self.cmds    = Object()
-        self.queue   = queue.Queue()
-        self.stopped = threading.Event()
-        Broker.add(self)
+    cmds = Object()
 
-    def add(self, func) -> None:
-        setattr(self.cmds, func.__name__, func)
+    @staticmethod 
+    def add(func) -> None:
+        setattr(CLI.cmds, func.__name__, func)
 
-    def announce(self, txt) -> None:
-        self.raw(txt)
-
-    def dosay(self, channel, txt) -> None:
-        self.raw(txt)
-
-    def event(self, txt):
-        evt = Event()
-        evt.txt = txt
-        evt.orig = object.__repr__(self)
-        return evt
-
-    def forever(self) -> None:
-        try:
-            self.stopped.wait()
-        except:
-            _thread.interrupt_main()
-
-    def dispatch(self, evt) -> None:
-        func = getattr(self.cmds, evt.cmd, None)
+    @staticmethod
+    def dispatch(evt) -> None:
+        func = getattr(CLI.cmds, evt.cmd, None)
         if not func:
             return
         func(evt)
         evt.show()
-
-    def loop(self) -> None:
-        while not self.stopped.is_set():
-            try:
-                self.dispatch(self.poll())
-            except (KeyboardInterrupt, EOFError):
-                _thread.interrupt_main()
-
-    def poll(self):
-        return self.queue.get()
-
-    def put(self, evt) -> None:
-        self.queue.put_nowait(evt)
-
-    def raw(self, txt) -> None:
-        pass
-
-    def start(self) -> None:
-        self.loop()
-
-    def stop(self) -> None:
-        self.stopped.set()
 
 
 class Event(Default):
 
     def __init__(self):
         Default.__init__(self)
-        self.channel = ""
-        self.orig    = ""
         self.result  = []
         self.txt     = ""
 
@@ -108,42 +98,7 @@ class Event(Default):
 
     def show(self) -> None:
         for txt in self.result:
-            Broker.say(self.orig, self.channel, txt)
-
-
-class Broker(Object):
-
-    objs = []
-
-    @staticmethod
-    def add(obj) -> None:
-        Broker.objs.append(obj)
-
-    @staticmethod
-    def announce(txt) -> None:
-        for obj in Broker.objs:
-            obj.announce(txt)
-
-    @staticmethod
-    def byorig(orig) -> Object:
-        for obj in Broker.objs:
-            if object.__repr__(obj) == orig:
-                return obj
-        return None
-
-    @staticmethod
-    def remove(obj) -> None:
-        try:
-            Broker.objs.remove(obj)
-        except ValueError:
-            pass
-
-    @staticmethod
-    def say(orig, channel, txt) -> None:
-        bot = Broker.byorig(orig)
-        if not bot:
-            return
-        bot.dosay(channel, txt)
+            print(txt.encode('utf-8', 'replace').decode())
 
 
 def parse(obj, txt=None) -> None:
@@ -194,59 +149,6 @@ def parse(obj, txt=None) -> None:
         obj.txt = obj.cmd or ""
 
 
-"mailbox"
-
-
-import mailbox
-
-
-bdmonths = [
-            'Bo',
-            'Jan',
-            'Feb',
-            'Mar',
-            'Apr',
-            'May',
-            'Jun',
-            'Jul',
-            'Aug',
-            'Sep',
-            'Oct',
-            'Nov',
-            'Dec'
-           ]
-
-
-monthint = {
-            'Jan': 1,
-            'Feb': 2,
-            'Mar': 3,
-            'Apr': 4,
-            'May': 5,
-            'Jun': 6,
-            'Jul': 7,
-            'Aug': 8,
-            'Sep': 9,
-            'Oct': 10,
-            'Nov': 11,
-            'Dec': 12
-           }
-
-
-class CLI(Handler):
-
-    def raw(self, txt):
-        print(txt.encode('utf-8', 'replace').decode())
-
-
-
-class Email(Default):
-
-    pass
-
-
-Storage.add(Email)
-
 
 def to_date(date):
     date = date.replace("_", ":")
@@ -285,8 +187,7 @@ def to_date(date):
 
 
 def cmd(event):
-    bot = Broker.byorig(event.orig)
-    event.reply(",".join(sorted(bot.cmds)))
+    event.reply(",".join(sorted(CLI.cmds)))
 
 
 def cor(event):
@@ -352,12 +253,12 @@ def scan(event):
 
 if __name__ == "__main__":
     parse(Cfg, " ".join(sys.argv[1:]))
-    cli = CLI()
-    cli.add(cmd)
-    cli.add(cor)
-    cli.add(eml)
-    cli.add(scan)
-    evn = cli.event(Cfg.otxt)
+    CLI.add(cmd)
+    CLI.add(cor)
+    CLI.add(eml)
+    CLI.add(scan)
+    evn = Event()
+    evn.txt = Cfg.otxt
     parse(evn)
-    cli.dispatch(evn)
+    CLI.dispatch(evn)
     
