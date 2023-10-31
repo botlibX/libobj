@@ -6,10 +6,10 @@
 "specification"
 
 
-from .locate  import *
-from .object  import *
-from .storage import *
-from .utils   import *
+from .disk   import *
+from .find   import *
+from .object import *
+from .utils  import *
 
 
 def __dir__():

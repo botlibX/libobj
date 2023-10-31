@@ -11,7 +11,7 @@ import time
 
 
 from .object  import Default, keys, search, update
-from .storage import Storage, fetch, fqn, strip
+from .disk    import Storage, fetch, fqn, strip
 
 
 def __dir__():
