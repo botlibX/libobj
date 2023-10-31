@@ -4,10 +4,11 @@
 # pylint: disable=C0115,C0116,C0209,C0413,W0201,R0903,W0212
 
 
-"object parsing"
+"object methods"
 
 
 import datetime
+import os
 import uuid
 
 

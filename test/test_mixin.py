@@ -9,7 +9,7 @@
 import unittest
 
 
-from obj import Object, read, write
+from obj import Object, read, update, write
 
 
 class Test:
@@ -24,7 +24,8 @@ class TestMixin(unittest.TestCase):
             pass
         mixin = Mixin()
         mixin.aaa = "b"
-        write(mixin, ".test/mixin")
+        #write(mixin, ".test/mixin")
         mixin2 = Mixin()
-        read(mixin2, ".test/mixin")
+        update(mixin2, mixin)
+        #read(mixin2, ".test/mixin")
         self.assertEqual(mixin2.aaa, "b")
