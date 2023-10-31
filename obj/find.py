@@ -58,7 +58,6 @@ def fmt(obj, args=None, skip=None, plain=False) -> str:
     return txt.strip()
 
 
-
 def fns(mtc) -> []:
     dname = ''
     pth = Storage.store(mtc)

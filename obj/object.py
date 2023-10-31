@@ -203,6 +203,35 @@ def construct(obj, *args, **kwargs) -> None:
         update(obj, kwargs)
 
 
+def edit(obj, setter, skip=False) -> None:
+    for key, val in items(setter):
+        if skip and val == "":
+            continue
+        try:
+            obj[key] = int(val)
+            continue
+        except ValueError:
+            pass
+        try:
+            obj[key] = float(val)
+            continue
+        except ValueError:
+            pass
+        if val in ["True", "true"]:
+            obj[key] = True
+        elif val in ["False", "false"]:
+            obj[key] = False
+        else:
+            obj[key] = val
+
+
+def fqn(obj) -> str:
+    kin = str(type(obj)).split()[-1][1:-2]
+    if kin == "type":
+        kin = obj.__name__
+    return kin
+
+
 def items(obj) -> []:
     if isinstance(obj, type({})):
         return obj.items()

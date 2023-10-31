@@ -109,6 +109,8 @@ def fnd(event):
         res = sorted([x.split('.')[-1].lower() for x in Storage.files()])
         if res:
             event.reply(",".join(res))
+        else:
+            event.reply("no objects in store")
         return
     otype = event.args[0]
     if event.gets:
