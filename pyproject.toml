@@ -29,8 +29,9 @@ classifiers = [
 "bugs" = "https://github.com/botlibx/libobj/issues"
 "source" = "https://github.com/botlibx/libobj"
 
+
 [project.scripts]
-"obj" = "obj.__main__.main"
+"obj" = "obj.__main__:main"
 
 [tool.setuptools]
 packages = [
