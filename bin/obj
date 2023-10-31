@@ -56,7 +56,7 @@ class Event(Default):
     def show(self) -> None:
         for txt in self.result:
             print(txt.encode('utf-8', 'replace').decode())
-
+            sys.stdout.flush()
 
 def cmd(event):
     event.reply(",".join(sorted(CLI.cmds)))
@@ -74,10 +74,11 @@ def fnd(event):
             event.reply("no objects in store")
         return
     otype = event.args[0]
+    args = []
     if event.gets:
-        args = keys(event.gets)
-    else:
-        args = None
+        args.extend(keys(event.gets))
+    if event.rest:
+        args.extend(event.args[1:])
     clz = Storage.long(otype)
     if "." not in clz:
         for fnm in Storage.files():
@@ -86,7 +87,7 @@ def fnd(event):
                 clz = fnm
     nmr = 0
     for fnm, obj in find(clz, event.gets):
-        event.reply(f"{nmr} {fmt(obj, args)}")
+        event.reply(f"{nmr} {fmt(obj, args, plain=True)}")
         nmr += 1
     if not nmr:
         event.reply("no result")
@@ -103,7 +104,6 @@ def main():
     evn.txt = Cfg.otxt
     parse(evn)
     CLI.dispatch(evn)
-
 
 if __name__ == "__main__":
     main()

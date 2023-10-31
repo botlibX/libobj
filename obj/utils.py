@@ -6,6 +6,9 @@
 "utilities"
 
 
+import os
+
+
 def __dir__():
     return (
             'laps',
@@ -58,3 +61,7 @@ def spl(txt) -> []:
     except (TypeError, ValueError):
         res = txt
     return [x for x in res if x]
+
+
+def strip(pth, nr=3) -> str:
+    return os.sep.join(pth.split(os.sep)[-nr:])

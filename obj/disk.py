@@ -11,7 +11,9 @@ import inspect
 import os
 
 
-from .object import Object, cdir, fqn, read, write
+from .object import Object, cdir, read, write
+from .method import fqn, ident
+from .utils  import strip
 
 
 def  __dir__():
@@ -80,27 +82,22 @@ class Storage:
             Storage.add(clz)
 
 
-"utilities"
-
-
-def strip(pth) -> str:
-    return os.sep.join(pth.split(os.sep)[-3:])
-
-
-"methods"
-
-
-def ident(obj) -> str:
-    return os.path.join(
-                        fqn(obj),
-                        os.path.join(*str(datetime.datetime.now()).split())
-                       )
-
-
 def fetch(obj, pth) -> None:
     pth2 = Storage.store(pth)
     read(obj, pth2)
     return strip(pth)
+
+
+def last(obj, selector=None) -> None:
+    if selector is None:
+        selector = {}
+    result = sorted(
+                    find(fqn(obj), selector),
+                    key=lambda x: fntime(x[0])
+                   )
+    if result:
+        inp = result[-1][-1]
+        update(obj, inp)
 
 
 def sync(obj, pth=None) -> str:
