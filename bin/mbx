@@ -1,0 +1,299 @@
+#!/usr/bin/env python3 
+# This file is placed in the Public Domain.
+#
+# pylint: disable=C0115,C0116,C0209,W0212
+
+
+"mailbox"
+
+
+import mailbox
+import os
+import sys
+import time
+
+
+sys.path.insert(0, os.getcwd())
+
+
+from obj import Object, find, fmt, fntime, laps, sync, update
+
+
+bdmonths = [
+            'Bo',
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec'
+           ]
+
+
+monthint = {
+            'Jan': 1,
+            'Feb': 2,
+            'Mar': 3,
+            'Apr': 4,
+            'May': 5,
+            'Jun': 6,
+            'Jul': 7,
+            'Aug': 8,
+            'Sep': 9,
+            'Oct': 10,
+            'Nov': 11,
+            'Dec': 12
+           }
+
+
+class Email(Object):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.text = ""
+
+    def len(self):
+        return len(self.__dict__)
+
+    def size(self):
+        return len(self.__dict__)
+
+
+def to_date(date):
+    date = date.replace("_", ":")
+    res = date.split()
+    ddd = ""
+    try:
+        if "+" in res[3]:
+            raise ValueError
+        if "-" in res[3]:
+            raise ValueError
+        int(res[3])
+        ddd = "{:4}-{:#02}-{:#02} {:6}".format(res[3], monthint[res[2]], int(res[1]), res[4])
+    except (IndexError, KeyError, ValueError) as ex:
+        try:
+            if "+" in res[4]:
+                raise ValueError from ex
+            if "-" in res[4]:
+                raise ValueError from ex
+            int(res[4])
+            ddd = "{:4}-{:#02}-{:02} {:6}".format(res[4], monthint[res[1]], int(res[2]), res[3])
+        except (IndexError, KeyError, ValueError):
+            try:
+                ddd = "{:4}-{:#02}-{:02} {:6}".format(res[2], monthint[res[1]], int(res[0]), res[3])
+            except (IndexError, KeyError):
+                try:
+                    ddd = "{:4}-{:#02}-{:02}".format(res[2], monthint[res[1]], int(res[0]))
+                except (IndexError, KeyError):
+                    try:
+                        ddd = "{:4}-{:#02}".format(res[2], monthint[res[1]])
+                    except (IndexError, KeyError):
+                        try:
+                            ddd = "{:4}".format(res[2])
+                        except (IndexError, KeyError):
+                            ddd = ""
+    return ddd
+
+
+def cor(event):
+    if not event.args:
+        event.reply("cor <email>")
+        return
+    nrs = -1
+    for fnm, email in find("email", {"From": event.args[0]}):
+        nrs += 1
+        txt = ""
+        if len(event.args) > 1:
+            txt = ",".join(event.args[1:])
+        else:
+            txt = "From,Subject"
+        lsp = laps(time.time() - fntime(email.__oid__))
+        txt = fmt(email)
+        event.reply(f"{nrs} {txt} {lsp}")
+
+
+def eml(event):
+    if not event.args:
+        event.reply("eml <txtinemail>")
+        return
+    nrs = -1
+    for fnm, email in find("email", event.gets):
+        if event.rest in email.text:
+            nrs += 1
+            txt = fmt(email, "From,Subject")
+            lsp = laps(time.time() - fntime(email.__oid__))
+            event.reply(f"{nrs} {txt} {lsp}")
+
+
+def mbx(event):
+    if not event.args:
+        return
+    path = os.path.expanduser(event.args[0])
+    event.reply(f"reading from {path}")
+    nrs = 0
+    if os.path.isdir(path):
+        thing = mailbox.Maildir(path, create=False)
+    elif os.path.isfile(path):
+        thing = mailbox.mbox(path, create=False)
+    else:
+        return
+    try:
+        thing.lock()
+    except FileNotFoundError:
+        pass
+    for mail in thing:
+        email = Email()
+        update(email, dict(mail._headers))
+        email.text = ""
+        for payload in mail.walk():
+            if payload.get_content_type() == 'text/plain':
+                email.text += payload.get_payload()
+        email.text = email.text.replace("\\n", "\n")
+        sync(email)
+        nrs += 1
+    if nrs:
+        event.reply(f"ok {nrs}")
+
+
+# This file is placed in the Public Domain.
+#
+# pylint: disable=C0115,C0116,C0209,C0413,W0201,R0903,W0212
+
+
+"mailbox"
+
+
+import os
+import sys
+
+
+sys.path.insert(0, os.getcwd())
+
+
+from obj import Default, Object, Storage, find, fmt
+
+
+Cfg = Default()
+
+
+class CLI:
+
+    cmds = Object()
+
+    @staticmethod
+    def add(func) -> None:
+        setattr(CLI.cmds, func.__name__, func)
+
+    @staticmethod
+    def dispatch(evt) -> None:
+        func = getattr(CLI.cmds, evt.cmd, None)
+        if not func:
+            return
+        func(evt)
+        evt.show()
+
+
+class Event(Default):
+
+    def __init__(self):
+        Default.__init__(self)
+        self.result  = []
+        self.txt     = ""
+
+    def reply(self, txt) -> None:
+        self.result.append(txt)
+
+    def show(self) -> None:
+        for txt in self.result:
+            print(txt.encode('utf-8', 'replace').decode())
+
+
+def parse(obj, txt=None) -> None:
+    args = []
+    obj.args    = obj.args or []
+    obj.cmd     = obj.cmd or ""
+    obj.gets    = obj.gets or Default()
+    obj.hasmods = obj.hasmod or False
+    obj.mod     = obj.mod or ""
+    obj.opts    = obj.opts or ""
+    obj.result  = obj.reult or []
+    obj.sets    = obj.sets or Default()
+    obj.otxt    = txt or obj.txt or ""
+    _nr = -1
+    for spli in obj.otxt.split():
+        if spli.startswith("-"):
+            try:
+                obj.index = int(spli[1:])
+            except ValueError:
+                obj.opts += spli[1:]
+            continue
+        if "=" in spli:
+            key, value = spli.split("=", maxsplit=1)
+            if key == "mod":
+                obj.hasmods = True
+                if obj.mod:
+                    obj.mod += f",{value}"
+                else:
+                    obj.mod = value
+                continue
+            setattr(obj.sets, key, value)
+            continue
+        if "==" in spli:
+            key, value = spli.split("==", maxsplit=1)
+            setattr(obj.gets, key, value)
+            continue
+        _nr += 1
+        if _nr == 0:
+            obj.cmd = spli
+            continue
+        args.append(spli)
+    if args:
+        obj.args = args
+        obj.txt  = obj.cmd or ""
+        obj.rest = " ".join(obj.args)
+        obj.txt  = obj.cmd + " " + obj.rest
+    else:
+        obj.txt = obj.cmd or ""
+
+
+def cmd(event):
+    event.reply(",".join(sorted(CLI.cmds)))
+
+
+def fnd(event):
+    if not event.rest:
+        res = sorted([x.split('.')[-1].lower() for x in Storage.files()])
+        if res:
+            event.reply(",".join(res))
+        return
+    otype = event.args[0]
+    clz = Storage.long(otype)
+    if "." not in clz:
+        for fnm in Storage.files():
+            claz = fnm.split(".")[-1]
+            if otype == claz.lower():
+                clz = fnm
+    nmr = 0
+    for fnm, obj in find(clz, event.gets):
+        event.reply(f"{nmr} {fmt(obj)}")
+        nmr += 1
+    if not nmr:
+        event.reply("no result")
+
+
+if __name__ == "__main__":
+    parse(Cfg, " ".join(sys.argv[1:]))
+    CLI.add(cmd)
+    CLI.add(eml)
+    CLI.add(fnd)
+    CLI.add(mbx)
+    evn = Event()
+    evn.txt = Cfg.otxt
+    parse(evn)
+    CLI.dispatch(evn)
