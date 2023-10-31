@@ -11,7 +11,7 @@ import inspect
 import os
 
 
-from .object import Object, cdir, fqn, items, read, write
+from .object import Object, cdir, fqn, read, write
 
 
 def  __dir__():

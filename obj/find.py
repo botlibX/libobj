@@ -91,9 +91,8 @@ def last(obj, selector=None) -> None:
         selector = {}
     result = sorted(
                     find(fqn(obj), selector),
-                    key=lambda x: fntime(x.__fnm__)
+                    key=lambda x: fntime(x[0])
                    )
     if result:
-        inp = result[-1]
+        inp = result[-1][-1]
         update(obj, inp)
-        obj.__fnm__ = inp.__fnm__
