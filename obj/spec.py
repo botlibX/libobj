@@ -9,6 +9,7 @@
 from .disk   import *
 from .find   import *
 from .object import *
+from .parse  import *
 from .utils  import *
 
 

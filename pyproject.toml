@@ -30,15 +30,14 @@ classifiers = [
 "source" = "https://github.com/botlibx/libobj"
 
 
-[project.scripts]
-"obj" = "obj.__main__:main"
-
 [tool.setuptools]
 packages = [
     'obj',
 ]
 zip-safe=true
-
+user-scripts = [
+    "bin/obj",
+]
 
 [tool.setuptools.exclude-package-data]
 "*" = [
