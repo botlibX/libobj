@@ -24,8 +24,9 @@ class TestMixin(unittest.TestCase):
             pass
         mixin = Mixin()
         mixin.aaa = "b"
-        #write(mixin, ".test/mixin")
+        write(mixin, ".test/mixin")
         mixin2 = Mixin()
-        update(mixin2, mixin)
-        #read(mixin2, ".test/mixin")
-        self.assertEqual(mixin2.aaa, "b")
+        mixin3 = Mixin()
+        update(mixin3, mixin)
+        read(mixin2, ".test/mixin")
+        self.assertEqual(mixin2.aaa, mixin3.aaa)

@@ -6,13 +6,12 @@
 "storage"
 
 
-import datetime
 import inspect
 import os
 
 
 from .object import Object, cdir, read, write
-from .method import fqn, ident
+from .method import ident
 from .utils  import strip
 
 
@@ -86,18 +85,6 @@ def fetch(obj, pth) -> None:
     pth2 = Storage.store(pth)
     read(obj, pth2)
     return strip(pth)
-
-
-def last(obj, selector=None) -> None:
-    if selector is None:
-        selector = {}
-    result = sorted(
-                    find(fqn(obj), selector),
-                    key=lambda x: fntime(x[0])
-                   )
-    if result:
-        inp = result[-1][-1]
-        update(obj, inp)
 
 
 def sync(obj, pth=None) -> str:
