@@ -3,7 +3,13 @@
 # pylint: disable=C0112,C0115,C0116,W0105,R0903,E0402,C0209,R1710
 
 
-"locate objects"
+"locate"
+
+
+__author__ = "libbot <libbotx@gmail.com>"
+
+
+"imports"
 
 
 import os
@@ -15,6 +21,9 @@ from .method import fqn, search
 from .disk   import Storage, fetch, strip
 
 
+"defines"
+
+
 def __dir__():
     return (
         "find",
@@ -22,6 +31,9 @@ def __dir__():
         "fntime",
         "last"
     )
+
+
+"utilities"
 
 
 def find(mtc, selector=None) -> []:
@@ -64,6 +76,9 @@ def fntime(daystr) -> float:
     else:
         timed = 0
     return timed
+
+
+"methods"
 
 
 def last(obj, selector=None) -> None:

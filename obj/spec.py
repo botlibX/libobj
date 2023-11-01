@@ -6,10 +6,19 @@
 "specification"
 
 
+__author__ = "libbot <libbotx@gmail.com>"
+
+
+"imports"
+
+
 from .disk   import *
 from .find   import *
 from .method import *
 from .object import *
+
+
+"defines"
 
 
 def __dir__():

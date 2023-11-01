@@ -6,12 +6,21 @@
 "storage"
 
 
+__author__ = "libbot <libbotx@gmail.com>"
+
+
+"imports"
+
+
 import inspect
 import os
 
 
 from .object import Object, cdir, read, write
 from .method import ident
+
+
+"defines"
 
 
 def  __dir__():
@@ -22,6 +31,9 @@ def  __dir__():
             'strip',
             'sync'
            )
+
+
+"storage"
 
 
 class Storage:

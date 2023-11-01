@@ -4,7 +4,13 @@
 # pylint: disable=C0115,C0116,C0209,C0413,W0201,R0903,W0212
 
 
-"object methods"
+"methods"
+
+
+__author__ = "libbot <libbotx@gmail.com>"
+
+
+"imports"
 
 
 import datetime
@@ -12,6 +18,23 @@ import os
 
 
 from .object import Default, items, keys
+
+
+"defines"
+
+
+def __dir__():
+    return (
+        'edit',
+        'fmt',
+        'fqn',
+        'ident',
+        'parse',
+        'search'
+    )
+
+
+"methods"
 
 
 def edit(obj, setter, skip=False) -> None:

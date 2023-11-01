@@ -29,10 +29,19 @@ this package is a Work In Progress (WIP).
 """
 
 
+__author__ = "libbot <libbotx@gmail.com>"
+
+
+"imports"
+
+
 import os
 import pathlib
 import json
 import _thread
+
+
+"defines"
 
 
 def __dir__():
@@ -50,6 +59,9 @@ def __dir__():
 
 
 lock = _thread.allocate_lock()
+
+
+"object"
 
 
 class Object:
@@ -179,7 +191,7 @@ def write(obj, pth) -> None:
         with open(pth, 'w', encoding='utf-8') as ofile:
             dump(obj, ofile)
 
-"utility"
+"utilities"
 
 
 def cdir(pth) -> None:

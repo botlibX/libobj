@@ -6,6 +6,12 @@
 "a clean namespace"
 
 
+__author__ = "libbot <libbotx@gmail.com>"
+
+
+"imports"
+
+
 from obj.spec import *
 from obj.spec import __dir__
 
