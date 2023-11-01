@@ -17,7 +17,7 @@ sys.path.insert(0, os.getcwd())
 
 
 from obj import Default, Object, Storage
-from obj import find, fmt, fntime, laps, parse, sync, update
+from obj import find, fmt, fntime, fqn, parse, sync, update
 
 
 "defines"
@@ -214,7 +214,14 @@ def mbx(event):
             if payload.get_content_type() == 'text/plain':
                 email.text += payload.get_payload()
         email.text = email.text.replace("\\n", "\n")
-        sync(email)
+        if "Date" in email:
+            date = to_date(email.Date)
+        elif "Published" in email:
+            date = to_date(email.Published)
+        elif "date" in email:
+            date = to_date(email.date)
+        print(date)
+        sync(email, os.path.join(fqn(Email), os.sep.join(date.split())))
         nrs += 1
     if nrs:
         event.reply(f"ok {nrs}")
