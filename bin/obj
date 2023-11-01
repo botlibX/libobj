@@ -15,7 +15,7 @@ import sys
 sys.path.insert(0, os.getcwd())
 
 
-from obj.spec import Default, Object, Storage, find, fmt, keys, parse, spl
+from obj.spec import Default, Object, Storage, find, fmt, keys, parse
 
 
 Cfg = Default()

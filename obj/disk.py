@@ -12,7 +12,6 @@ import os
 
 from .object import Object, cdir, read, write
 from .method import ident
-from .utils  import strip
 
 
 def  __dir__():
@@ -20,6 +19,7 @@ def  __dir__():
             'Storage',
             'fetch',
             'ident',
+            'strip',
             'sync'
            )
 
@@ -79,6 +79,16 @@ class Storage:
             if not issubclass(clz, Object):
                 continue
             Storage.add(clz)
+
+
+"utility"
+
+
+def strip(pth, nr=3) -> str:
+    return os.sep.join(pth.split(os.sep)[-nr:])
+
+
+"methods"
 
 
 def fetch(obj, pth) -> None:

@@ -10,7 +10,6 @@ from .disk   import *
 from .find   import *
 from .method import *
 from .object import *
-from .utils  import *
 
 
 def __dir__():
