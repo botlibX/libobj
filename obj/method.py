@@ -19,21 +19,21 @@ def edit(obj, setter, skip=False) -> None:
         if skip and val == "":
             continue
         try:
-            obj[key] = int(val)
+            setattr(obj, key, int(val))
             continue
         except ValueError:
             pass
         try:
-            obj[key] = float(val)
+            setattr(obj, key, float(val))
             continue
         except ValueError:
             pass
         if val in ["True", "true"]:
-            obj[key] = True
+            setattr(obj, key, True)
         elif val in ["False", "false"]:
-            obj[key] = False
+            setattr(obj, key, False)
         else:
-            obj[key] = val
+            setattr(obj, key, val)
 
 
 def fmt(obj, args=None, skip=None, plain=False) -> str:
