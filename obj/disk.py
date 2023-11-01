@@ -84,8 +84,8 @@ class Storage:
 "utility"
 
 
-def strip(pth, nr=3) -> str:
-    return os.sep.join(pth.split(os.sep)[-nr:])
+def strip(pth, nmr=3) -> str:
+    return os.sep.join(pth.split(os.sep)[-nmr:])
 
 
 "methods"
