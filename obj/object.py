@@ -30,12 +30,6 @@ this package is a Work In Progress (WIP).
 """
 
 
-__author__ = "libbot <libbotx@gmail.com>"
-
-
-"imports"
-
-
 import os
 import pathlib
 import json

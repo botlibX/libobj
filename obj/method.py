@@ -7,12 +7,6 @@
 "methods"
 
 
-__author__ = "libbot <libbotx@gmail.com>"
-
-
-"imports"
-
-
 import datetime
 import os
 

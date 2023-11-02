@@ -6,12 +6,6 @@
 "storage"
 
 
-__author__ = "libbot <libbotx@gmail.com>"
-
-
-"imports"
-
-
 import inspect
 import os
 

@@ -6,12 +6,6 @@
 "locate"
 
 
-__author__ = "libbot <libbotx@gmail.com>"
-
-
-"imports"
-
-
 import os
 import time
 
