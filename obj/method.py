@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C0115,C0116,C0209,C0413,W0201,R0903,W0212,W0105
+# pylint: disable=C0115,C0116,C0209,C0413,W0201,R0903,W0212,W0105,E0402
 
 
 "methods"
@@ -17,7 +17,7 @@ import datetime
 import os
 
 
-from .object import Default, items, keys, spl
+from .object import Default, items, keys
 
 
 "defines"

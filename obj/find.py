@@ -16,7 +16,7 @@ import os
 import time
 
 
-from .object import Default, items, update
+from .object import Default, items, spl, update
 from .method import fqn
 from .disk   import Storage, fetch, strip
 
@@ -76,14 +76,6 @@ def fntime(daystr) -> float:
     else:
         timed = 0
     return timed
-
-
-def spl(txt) -> []:
-    try:
-        res = txt.split(',')
-    except (TypeError, ValueError):
-        res = txt
-    return [x for x in res if x]
 
 
 "methods"
