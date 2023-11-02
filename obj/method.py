@@ -17,7 +17,7 @@ import datetime
 import os
 
 
-from .object import Default, items, keys
+from obj.object import Default, items, keys
 
 
 "defines"

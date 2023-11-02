@@ -1,2 +1,2 @@
 bin/clean
-pylint obj/* test/*
+pylint bin/obj bin/mbx obj/* tests/*
