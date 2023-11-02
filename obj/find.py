@@ -40,7 +40,7 @@ def find(mtc, selector=None) -> []:
     if selector is None:
         selector = {}
     clz = Storage.long(mtc)
-    for fnm in reversed(sorted(fns(clz), key=fntime)):
+    for fnm in sorted(fns(clz), key=fntime):
         obj = Default()
         fetch(obj, fnm)
         if '__deleted__' in obj:
@@ -55,12 +55,12 @@ def fns(mtc) -> []:
     pth = Storage.store(mtc)
     for rootdir, dirs, _files in os.walk(pth, topdown=False):
         if dirs:
-            dname = sorted(dirs)[-1]
-            if dname.count('-') == 2:
-                ddd = os.path.join(rootdir, dname)
-                fls = sorted(os.listdir(ddd))
-                for fll in fls:
-                    yield strip(os.path.join(ddd, fll))
+            for dname in sorted(dirs):
+                if dname.count('-') == 2:
+                    ddd = os.path.join(rootdir, dname)
+                    fls = sorted(os.listdir(ddd))
+                    for fll in fls:
+                        yield strip(os.path.join(ddd, fll))
 
 
 def fntime(daystr) -> float:

@@ -93,7 +93,6 @@ def fnd(event):
                 clz = fnm
     nmr = 0
     for fnm, obj in find(clz, event.gets):
-        
         event.reply(f"{nmr} {fmt(obj, args, plain=True)}")
         nmr += 1
     if not nmr:

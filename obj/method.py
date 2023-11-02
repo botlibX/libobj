@@ -65,7 +65,7 @@ def fmt(obj, args=None, skip=None, plain=False) -> str:
     if skip is None:
         skip = []
     txt = ""
-    for key in sorted(args):
+    for key in args:
         if key in skip:
             continue
         value = getattr(obj, key, None)

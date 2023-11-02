@@ -16,8 +16,10 @@ import time
 sys.path.insert(0, os.getcwd())
 
 
-from obj import Default, Object, Storage
-from obj import find, fmt, fntime, fqn, parse, sync, update
+from obj.object import Default, Object, keys, update
+from obj.disk   import Storage, sync
+from obj.find   import find, fntime
+from obj.method import fmt, fqn, parse
 
 
 "defines"
@@ -174,8 +176,15 @@ def fnd(event):
         res = sorted([x.split('.')[-1].lower() for x in Storage.files()])
         if res:
             event.reply(",".join(res))
+        else:
+            event.reply("no objects in store")
         return
     otype = event.args[0]
+    args = []
+    if event.gets:
+        args.extend(keys(event.gets))
+    if event.rest:
+        args.extend(event.args[1:])
     clz = Storage.long(otype)
     if "." not in clz:
         for fnm in Storage.files():
@@ -184,7 +193,7 @@ def fnd(event):
                 clz = fnm
     nmr = 0
     for fnm, obj in find(clz, event.gets):
-        event.reply(f"{nmr} {fmt(obj)}")
+        event.reply(f"{nmr} {fmt(obj, args, plain=True)}")
         nmr += 1
     if not nmr:
         event.reply("no result")
@@ -220,8 +229,7 @@ def mbx(event):
             date = to_date(email.Published)
         elif "date" in email:
             date = to_date(email.date)
-        print(date)
-        sync(email, os.path.join(fqn(Email), os.sep.join(date.split())))
+        sync(email, os.path.join(fqn(email), os.sep.join(date.split())))
         nrs += 1
     if nrs:
         event.reply(f"ok {nrs}")
