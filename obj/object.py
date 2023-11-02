@@ -200,6 +200,14 @@ def cdir(pth) -> None:
     os.makedirs(pth, exist_ok=True)
 
 
+def spl(txt) -> []:
+    try:
+        res = txt.split(',')
+    except (TypeError, ValueError):
+        res = txt
+    return [x for x in res if x]
+
+
 "methods"
 
 

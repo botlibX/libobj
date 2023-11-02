@@ -24,6 +24,9 @@ from obj.method import fmt, fqn, parse
 "defines"
 
 
+Storage.wd = os.path.expanduser("~/.obj")
+
+
 bdmonths = [
             'Bo',
             'Jan',

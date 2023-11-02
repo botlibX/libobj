@@ -35,7 +35,9 @@ packages = [
     'obj',
 ]
 zip-safe=true
-
+script-files = [
+    "bin/obj",
+]
 
 [tool.setuptools.exclude-package-data]
 "*" = [

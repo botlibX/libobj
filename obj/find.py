@@ -16,8 +16,8 @@ import os
 import time
 
 
-from .object import Default, update
-from .method import fqn, search
+from .object import Default, items, update
+from .method import fqn
 from .disk   import Storage, fetch, strip
 
 
@@ -78,6 +78,14 @@ def fntime(daystr) -> float:
     return timed
 
 
+def spl(txt) -> []:
+    try:
+        res = txt.split(',')
+    except (TypeError, ValueError):
+        res = txt
+    return [x for x in res if x]
+
+
 "methods"
 
 
@@ -91,3 +99,19 @@ def last(obj, selector=None) -> None:
     if result:
         inp = result[-1][-1]
         update(obj, inp)
+
+
+def search(obj, selector) -> bool:
+    res = False
+    for key, value in items(selector):
+        if key not in obj:
+            res = False
+            break
+        for vval in spl(str(value)):
+            val = getattr(obj, key, None)
+            if str(vval).lower() in str(val).lower():
+                res = True
+            else:
+                res = False
+                break
+    return res

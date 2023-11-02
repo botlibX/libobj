@@ -21,6 +21,9 @@ from obj.find   import find
 from obj.method import fmt, parse
 
 
+Storage.wd = os.path.expanduser("~/.obj")
+
+
 Cfg = Default()
 
 
@@ -110,6 +113,7 @@ def main():
     evn.txt = Cfg.otxt
     parse(evn)
     CLI.dispatch(evn)
+
 
 if __name__ == "__main__":
     main()

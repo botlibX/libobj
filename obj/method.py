@@ -17,7 +17,7 @@ import datetime
 import os
 
 
-from obj.object import Default, items, keys
+from .object import Default, items, keys, spl
 
 
 "defines"
@@ -115,6 +115,9 @@ def parse(obj, txt=None) -> None:
             continue
         if "==" in spli:
             key, value = spli.split("==", maxsplit=1)
+            if key in obj.gets:
+                val = getattr(obj.gets, key)
+                value = val + "," + value
             setattr(obj.gets, key, value)
             continue
         if "=" in spli:
@@ -140,18 +143,3 @@ def parse(obj, txt=None) -> None:
         obj.txt  = obj.cmd + " " + obj.rest
     else:
         obj.txt = obj.cmd or ""
-
-
-def search(obj, selector) -> bool:
-    res = False
-    for key, value in items(selector):
-        if key not in obj:
-            res = False
-            break
-        val = getattr(obj, key, None)
-        if val and str(value) in str(val):
-            res = True
-        else:
-            res = False
-            break
-    return res
