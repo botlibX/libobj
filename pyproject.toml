@@ -24,6 +24,10 @@ classifiers = [
 ]
 
 
+[project.scripts]
+"obj" = "obj.__main__:main"
+
+
 [project.urls]
 "home" = "https://pypi.org/project/libobj"
 "bugs" = "https://github.com/botlibx/libobj/issues"
@@ -35,9 +39,7 @@ packages = [
     'obj',
 ]
 zip-safe=true
-script-files = [
-    "bin/obj",
-]
+
 
 [tool.setuptools.exclude-package-data]
 "*" = [
