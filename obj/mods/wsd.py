@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,I,R
+# pylint: disable=C,I,R,W0105
 
 
 """| wijsheid, wijs !

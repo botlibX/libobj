@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C0115,C0116,R0903
+# pylint: disable=C0115,C0116,R0903,E0402,W0105,W0613
 
 
 "udp to irc relay"
@@ -12,9 +12,9 @@ import sys
 import time
 
 
-from ..disk   unoirt last
-from ..object import Object
-from ..run    import Broker, launch
+from ..objects import Object
+from ..runtime import Broker, launch
+from ..storage import last
 
 
 "defines"

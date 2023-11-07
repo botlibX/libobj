@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 #
 # pylint: disable=C0115,C0116,C0209,C0413,W0201,R0903,W0212,E0402
-# pylint: disable=W0105,R1710,W0718,W0702
+# pylint: disable=W0105,R1710,W0718,W0702,E1102
 
 
 "runtime"
@@ -14,6 +14,7 @@ import queue
 import time
 import threading
 import traceback
+import types
 import _thread
 
 

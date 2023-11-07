@@ -11,9 +11,9 @@ import datetime
 import time
 
 
-from ..disk   import laps 
-from ,.object import Object, construct, keys
-from ..run    import Broker, Event, Repeater, launch
+from ..objects import Object, construct, keys
+from ..runtime import Broker, Event, Repeater, launch
+from ..storage import laps 
 
 
 def __dir__():

@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C0112,C0115,C0116,W0105,R0903,E0402,C0209,R1710,C0413
+# pylint: disable=C0112,C0115,C0116,W0105,R0903,E0402,C0209,R1710,C0413,C0103
 
 
 "storage"
@@ -13,7 +13,7 @@ import time
 
 
 from .objects import Object, cdir, read, write
-from .objects import Default, items, search, spl, update
+from .objects import Default, search, update
 
 
 "defines"
