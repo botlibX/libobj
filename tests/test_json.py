@@ -9,7 +9,7 @@
 import unittest
 
 
-from obj.object import Object, dumps, loads
+from obj.objects import Object, dumps, loads
 
 
 VALIDJSON = "{'test': 'bla'}"

@@ -4,116 +4,122 @@
 # pylint: disable=C0115,C0116,C0209,C0413,W0201,R0903,W0212
 
 
-"command line interface"
+"program"
 
 
 import inspect
 import os
 import sys
+import termios
+import time
 
 
 sys.path.insert(0, os.getcwd())
 
 
-from obj.object import Default, Object, keys
-from obj.disk   import Storage
-from obj.find   import find
-from obj.method import fmt, parse
+from obj.objects import Object
+from obj.runtime import  Reactor, Storage
+from obj.runtime import Censor, Cfg, Commands, Default, Errors, Event
+from obj.runtime import forever, parse,  lsmod, scan
 
 
+"defines"
+
+
+Cfg.name   = "obj"
 Storage.wd = os.path.expanduser("~/.obj")
 
 
-Cfg = Default()
+"modules"
 
 
-class CLI:
-
-    cmds = Object()
-
-    @staticmethod
-    def add(func) -> None:
-        setattr(CLI.cmds, func.__name__, func)
-
-    @staticmethod
-    def dispatch(evt) -> None:
-        func = getattr(CLI.cmds, evt.cmd, None)
-        if not func:
-            return
-        func(evt)
-        evt.show()
-
-    @staticmethod
-    def scan(mod) -> None:
-        for key, cmd in inspect.getmembers(mod, inspect.isfunction):
-            if key.startswith("cb"):
-                continue
-            if 'event' in cmd.__code__.co_varnames:
-                CLI.add(cmd)
+from obj import mods
 
 
-class Event(Default):
+"cli"
+
+
+class CLI(Commands):
+
+    def dosay(self, channel, txt):
+        print(txt.encode('utf-8', 'replace').decode())
+        sys.stdout.flush()
+
+
+"console"
+
+
+class Console(Reactor):
 
     def __init__(self):
-        Default.__init__(self)
-        self.result  = []
-        self.txt     = ""
+        Reactor.__init__(self)
+        self.register("command", Commands.dispatch)
 
-    def reply(self, txt) -> None:
-        self.result.append(txt)
+    def announce(self, txt):
+        pass
 
-    def show(self) -> None:
-        for txt in self.result:
-            print(txt.encode('utf-8', 'replace').decode())
-            sys.stdout.flush()
+    def dispatch(self, evt):
+        Commands.dispatch(evt)
 
-def cmd(event):
-    event.reply(",".join(sorted(CLI.cmds)))
+    def dosay(self, channel, txt):
+        print(txt)
 
-
-CLI.add(cmd)
-
-
-def fnd(event):
-    if not event.rest:
-        res = sorted([x.split('.')[-1].lower() for x in Storage.files()])
-        if res:
-            event.reply(",".join(res))
-        else:
-            event.reply("no objects in store")
-        return
-    otype = event.args[0]
-    args = []
-    if event.gets:
-        args.extend(keys(event.gets))
-    if event.rest:
-        args.extend(event.args[1:])
-    clz = Storage.long(otype)
-    if "." not in clz:
-        for fnm in Storage.files():
-            claz = fnm.split(".")[-1]
-            if otype == claz.lower():
-                clz = fnm
-    nmr = 0
-    for fnm, obj in find(clz, event.gets):
-        event.reply(f"{nmr} {fmt(obj, args, plain=True)}")
-        nmr += 1
-    if not nmr:
-        event.reply("no result")
+    def poll(self) -> Event:
+        evt = Event()
+        evt.orig = object.__repr__(self)
+        evt.txt = input("> ")
+        evt.type = "command"
+        return evt
 
 
-CLI.add(fnd)
+"utilities"
+        
+
+def wrap(func) -> None:
+    old = None
+    try:
+        old = termios.tcgetattr(sys.stdin.fileno())
+    except termios.error:
+        pass
+    try:
+        func()
+    except (EOFError, KeyboardInterrupt):
+        print("")
+        sys.stdout.flush()
+    finally:
+        if old:
+            termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old)
+
+
+"runtime"
 
 
 def main():
+    Censor.output = print
     parse(Cfg, " ".join(sys.argv[1:]))
     if "wd" in Cfg.sets:
         Storage.wd = Cfg.wd
+    if not Cfg.mod:
+        Cfg.mod = ",".join((lsmod(mods.__path__[0])))
+    if "v" in Cfg.opts:
+        dte = time.ctime(time.time()).replace("  ", " ")
+        print(f"{Cfg.name.upper()} started {dte} {Cfg.opts.upper()} {Cfg.mod.upper()}")
+    for mod in scan(mods, Cfg.mod):
+        if "i" in Cfg.opts and "init" in dir(mod):
+            mod.init()
+    if "c" in Cfg.opts:
+       csl = Console()
+       csl.start()
+       forever()
+       return
+    cli = CLI()
     evn = Event()
+    evn.orig = object.__repr__(cli)
     evn.txt = Cfg.otxt
     parse(evn)
     CLI.dispatch(evn)
 
 
 if __name__ == "__main__":
-    main()
+    wrap(main)
+    Errors.show()

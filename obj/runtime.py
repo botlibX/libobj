@@ -20,17 +20,8 @@ import _thread
 "defines"
 
 
-def __dir__():
-    return (
-        'Censor',
-        'Errors',
-        'debug'
-    )
-
-
-from .object import Default, Object, spl
-from .disk   import Storage
-from .thread import launch
+from .objects import Default, Object, spl
+from .storage import Storage
 
 
 "defines"
@@ -112,11 +103,12 @@ class Censor(Object):
 "commands"
 
 
-class Commands:
+class Commands(Object):
 
     cmds = Object()
 
     def __init__(self):
+        Object.__init__(self)
         Broker.add(self)
 
     @staticmethod

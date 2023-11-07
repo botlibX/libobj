@@ -9,7 +9,7 @@
 import unittest
 
 
-from obj.object import Object, read, update, write
+from obj.objects import Object, read, update, write
 
 
 class Test:
