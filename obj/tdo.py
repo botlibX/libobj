@@ -9,8 +9,8 @@
 import time
 
 
-from ..objects import Object
-from ..storage import find, fntime, laps, sync
+from .objects import Object
+from .storage import find, fntime, laps, sync
 
 
 "todo"

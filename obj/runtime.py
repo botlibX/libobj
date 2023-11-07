@@ -21,7 +21,9 @@ import _thread
 "defines"
 
 
-from .objects import Default, Object, spl
+from obj.objects import Default, Object, spl
+
+
 from .storage import Storage
 
 
