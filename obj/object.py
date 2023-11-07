@@ -41,8 +41,11 @@ import _thread
 
 def __dir__():
     return (
+            'Default',
             'Object',
             'construct',
+            'edit',
+            'fmt',
             'items',
             'keys',
             'read',
@@ -186,6 +189,7 @@ def write(obj, pth) -> None:
         with open(pth, 'w', encoding='utf-8') as ofile:
             dump(obj, ofile)
 
+
 "utilities"
 
 
@@ -218,6 +222,49 @@ def construct(obj, *args, **kwargs) -> None:
         update(obj, kwargs)
 
 
+def edit(obj, setter, skip=False) -> None:
+    for key, val in items(setter):
+        if skip and val == "":
+            continue
+        try:
+            setattr(obj, key, int(val))
+            continue
+        except ValueError:
+            pass
+        try:
+            setattr(obj, key, float(val))
+            continue
+        except ValueError:
+            pass
+        if val in ["True", "true"]:
+            setattr(obj, key, True)
+        elif val in ["False", "false"]:
+            setattr(obj, key, False)
+        else:
+            setattr(obj, key, val)
+
+
+def fmt(obj, args=None, skip=None, plain=False) -> str:
+    if args is None:
+        args = keys(obj)
+    if skip is None:
+        skip = []
+    txt = ""
+    for key in args:
+        if key in skip:
+            continue
+        value = getattr(obj, key, None)
+        if value is None:
+            continue
+        if plain:
+            txt += f"{value} "
+        elif isinstance(value, str) and len(value.split()) >= 2:
+            txt += f'{key}="{value}" '
+        else:
+            txt += f'{key}={value} '
+    return txt.strip()
+
+
 def items(obj) -> []:
     if isinstance(obj, type({})):
         return obj.items()
@@ -228,6 +275,22 @@ def keys(obj) -> []:
     if isinstance(obj, type({})):
         return obj.keys()
     return list(obj.__dict__.keys())
+
+
+def search(obj, selector) -> bool:
+    res = False
+    for key, value in items(selector):
+        if key not in obj:
+            res = False
+            break
+        for vval in spl(str(value)):
+            val = getattr(obj, key, None)
+            if str(vval).lower() in str(val).lower():
+                res = True
+            else:
+                res = False
+                break
+    return res
 
 
 def update(obj, data, empty=True) -> None:

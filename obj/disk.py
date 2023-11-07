@@ -6,12 +6,12 @@
 "storage"
 
 
+import datetime
 import inspect
 import os
 
 
 from .object import Object, cdir, read, write
-from .method import ident
 
 
 "defines"
@@ -21,6 +21,7 @@ def  __dir__():
     return (
             'Storage',
             'fetch',
+            'fqn',
             'ident',
             'strip',
             'sync'
@@ -54,6 +55,11 @@ class Storage:
             if split in named.split(".")[-1].lower():
                 res = named
                 break
+        if "." not in res:
+            for fnm in Storage.files():
+                claz = fnm.split(".")[-1]
+                if fnm == claz.lower():
+                    res = fnm
         return res
 
     @staticmethod
@@ -97,10 +103,24 @@ def strip(pth, nmr=3) -> str:
 "methods"
 
 
+def fqn(obj) -> str:
+    kin = str(type(obj)).split()[-1][1:-2]
+    if kin == "type":
+        kin = obj.__name__
+    return kin
+
+
 def fetch(obj, pth) -> None:
     pth2 = Storage.store(pth)
     read(obj, pth2)
     return strip(pth)
+
+
+def ident(obj) -> str:
+    return os.path.join(
+                        fqn(obj),
+                        os.path.join(*str(datetime.datetime.now()).split())
+                       )
 
 
 def sync(obj, pth=None) -> str:
