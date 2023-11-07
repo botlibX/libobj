@@ -9,7 +9,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "libobj"
 description = "object library"
-version = "503"
+version = "510"
 authors = [
     {name = "libbot",email = "libbotx@gmail.com"},
 ]
