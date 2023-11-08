@@ -9,7 +9,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "libobj"
 description = "object library"
-version = "510"
+version = "512"
 authors = [
     {name = "libbot",email = "libbotx@gmail.com"},
 ]
@@ -22,10 +22,6 @@ classifiers = [
     'Programming Language :: Python',
     'Topic :: Utilities'
 ]
-
-
-[project.scripts]
-"obj" = "obj.__main__:main"
 
 
 [project.urls]
