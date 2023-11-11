@@ -20,14 +20,12 @@ import _thread
 sys.path.insert(0, os.getcwd())
 
 
-from bot.disk   import Storage, laps
-from bot.error  import Censor
-from bot.object import Default, Object, keys
-from bot.thread import launch
-
-
-from mods.run   import CLI, Commands, Event
-from mods.run   import lsmod, parse, scan
+from obj.disk   import Storage, laps
+from obj.error  import Censor
+from obj.object import Default, Object, keys
+from obj.run   import CLI, Commands, Event
+from obj.run   import lsmod, parse, scan
+from obj.thread import launch
 
 
 STARTTIME = time.time()

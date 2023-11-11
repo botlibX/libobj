@@ -14,10 +14,8 @@ import time
 
 from obj.disk   import last
 from obj.object import Object
+from obj.run import Broker
 from obj.thread import launch
-
-
-from .run import Broker
 
 
 def init():
