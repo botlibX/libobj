@@ -6,13 +6,10 @@
 "status of bots"
 
 
-from ..runtime import Broker, Errors
+from bot import Broker, Errors
 
 
-"commands"
-
-
-def sts(event):
+def err(event):
     nmr = 0
     for bot in Broker.objs:
         if 'state' in dir(bot):

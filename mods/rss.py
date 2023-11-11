@@ -18,12 +18,9 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
 
 
-from ..objects import Default, Object, fmt, update
-from ..runtime import Broker, Cfg, Repeater, launch
-from ..storage import find, fntime, laps, last, sync
-
-
-"defines"
+from bot import Default, Object, fmt, update
+from bot import Broker, Cfg, Repeater, launch
+from bot import find, fntime, laps, last, sync
 
 
 def init():
@@ -33,9 +30,6 @@ def init():
 
 
 fetchlock = _thread.allocate_lock()
-
-
-"classes"
 
 
 class Feed(Default):
@@ -211,9 +205,6 @@ def unescape(text):
 
 def useragent(txt):
     return 'Mozilla/5.0 (X11; Linux x86_64) ' + txt
-
-
-"commands"
 
 
 def dpl(event):

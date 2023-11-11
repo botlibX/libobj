@@ -12,21 +12,13 @@ import sys
 import time
 
 
-from ..objects import Object
-from ..runtime import Broker, launch
-from ..storage import last
-
-
-"defines"
+from bot import Broker, Object, launch, last
 
 
 def init():
     udpd = UDP()
     udpd.start()
     return udpd
-
-
-"udp"
 
 
 class Cfg(Object):
@@ -79,15 +71,9 @@ class UDP(Object):
         launch(self.server)
 
 
-"utility"
-
-
 def toudp(host, port, txt):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.sendto(bytes(txt.strip(), "utf-8"), (host, port))
-
-
-"command"
 
 
 def udp(event):

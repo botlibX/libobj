@@ -3,6 +3,7 @@
 # pylint: disable=C0115,C0116,C0209,W0212,E1101,W0105,C0413,W0105,R0903,E0401
 # pylint: disable=E0402
 
+
 "mailbox"
 
 
@@ -10,11 +11,8 @@ import mailbox
 import os
 
 
-from ..storage import fqn, sync
-from ..objects import Object, update
-
-
-"defines"
+from bot import fqn, sync
+from bot import Object, update
 
 
 bdmonths = [
@@ -50,17 +48,11 @@ monthint = {
            }
 
 
-"email"
-
-
 class Email(Object):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.text = ""
-
-
-"utility"
 
 
 def to_date(date):
@@ -119,9 +111,6 @@ def to_date(date):
                         except (IndexError, KeyError):
                             ddd = ""
     return ddd
-
-
-"command"
 
 
 def mbx(event):

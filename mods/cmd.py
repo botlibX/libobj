@@ -6,10 +6,7 @@
 "list of commands"
 
 
-from ..runtime import Commands
-
-
-"commands"
+from bot import Commands
 
 
 def cmd(event):

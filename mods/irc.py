@@ -18,16 +18,11 @@ import time
 import _thread
 
 
-from ..objects import Default, Object, edit, fmt, keys
-from ..runtime import Broker, Censor, Cfg, Commands, Event, Reactor
-from ..runtime import debug, launch
-from ..storage import last, sync
+from bot import Broker, Censor, Cfg, Commands, Default, Event, Object, Reactor
+from bot import debug, edit, find, fmt, keys, last, launch, sync
 
 
-"defines"
-
-
-NAME = Cfg.name or "obj"
+NAME = Cfg.name
 
 
 Censor.words = ["PING", "PONG", "PRIVMSG"]
@@ -41,9 +36,6 @@ def init():
     irc.start()
     irc.events.joined.wait()
     return irc
-
-
-"config"
 
 
 class Config(Default):
@@ -73,9 +65,6 @@ class Config(Default):
         self.username = self.username or Config.username
 
 
-"cache"
-
-
 class Cache(Object):
 
     cache = {}
@@ -85,9 +74,6 @@ class Cache(Object):
         if chan in Cache.cache:
             return len(Cache.cache.get(chan, []))
         return 0
-
-
-"output"
 
 
 class TextWrap(textwrap.TextWrapper):
@@ -157,9 +143,6 @@ class Output(Cache):
                 self.dosay(channel, txt)
 
 
-"users"
-
-
 class NoUser(Exception):
 
     pass
@@ -218,9 +201,6 @@ class Users:
             user.perms.append(permission.upper())
             sync(user)
         return user
-
-
-"irc"
 
 
 class IRC(Reactor, Output):
@@ -555,9 +535,6 @@ class IRC(Reactor, Output):
         self.events.ready.wait()
 
 
-"callbacks"
-
-
 byorig = Broker.byorig
 
 
@@ -648,9 +625,6 @@ def cb_quit(evt):
     debug(f"quit from {bot.cfg.server}")
     if evt.orig and evt.orig in bot.zelf:
         bot.stop()
-
-
-"commands"
 
 
 def cfg(event):
