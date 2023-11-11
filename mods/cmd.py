@@ -6,7 +6,7 @@
 "list of commands"
 
 
-from obj.run import Commands
+from obj import Commands
 
 
 def cmd(event):

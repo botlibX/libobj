@@ -1,141 +1,49 @@
 #!/usr/bin/env python3
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C0115,C0116,C0209,C0413,W0201,R0903,W0212,W0105,W0613
+# pylint: disable=C0103,C0115,C0116,C0209,C0413,W0201,R0903,W0212,W0105,W0613
 
 
 "program"
 
 
-import getpass
 import os
-import pwd
-import readline
 import sys
-import termios
-import time
 
 
-sys.path.insert(0, os.getcwd())
-
-
-from obj.disk   import Storage
-from obj.object import Default, cdir
-from obj.error  import Censor, Errors, debug
-from obj.run    import CLI, Commands, Event, Reactor
-from obj.run    import command, parse,  lsmod, scan
-from obj.thread import forever
-
-
-
-if os.path.exists("mods"):
-    import mods
-else:
-    mods = None
+from obj import CLI, Commands, Default, Errors, Event, Storage
+from obj import command, parse,  lsmod, scan
 
 
 Cfg = Default()
-Cfg.name    = __file__.split(os.sep)[-1].lower()
+Cfg.name = __file__.rsplit(os.sep, maxsplit=1)[-1].lower()
 Storage.wd = os.path.expanduser(f"~/.{Cfg.name}")
-Cfg.pidfile = os.path.join(Storage.wd, f"{Cfg.name}.pid")
 
-
-class CLI(CLI, Commands):
+class Cli(CLI, Commands):
 
     def dosay(self, channel, txt):
         print(txt.encode('utf-8', 'replace').decode())
         sys.stdout.flush()
 
 
-class Console(CLI):
-
-    def poll(self) -> Event:
-        evt = Event()
-        evt.orig = object.__repr__(self)
-        evt.txt = input("> ")
-        evt.type = "command"
-        return evt
-
-
-def daemon(pidfile, username=None, verbose=False):
-    pid = os.fork()
-    if pid != 0:
-        os._exit(0)
-    os.setsid()
-    pid2 = os.fork()
-    if pid2 != 0:
-        os._exit(0)
-    if not verbose:
-        with open('/dev/null', 'r', encoding="utf-8") as sis:
-            os.dup2(sis.fileno(), sys.stdin.fileno())
-        with open('/dev/null', 'a+', encoding="utf-8") as sos:
-            os.dup2(sos.fileno(), sys.stdout.fileno())
-        with open('/dev/null', 'a+', encoding="utf-8") as ses:
-            os.dup2(ses.fileno(), sys.stderr.fileno())
-    os.umask(0)
-    os.chdir("/")
-    if os.path.exists(pidfile):
-        os.unlink(pidfile)
-    cdir(os.path.dirname(pidfile))
-    with open(pidfile, "w", encoding="utf-8") as fds:
-        fds.write(str(os.getpid()))
-    pwnam = pwd.getpwnam(getpass.getuser())
-    os.setgid(pwnam.pw_gid)
-    os.setuid(pwnam.pw_uid)
-
-
-def wrap(func) -> None:
-    old = None
-    try:
-        old = termios.tcgetattr(sys.stdin.fileno())
-    except termios.error:
-        pass
-    try:
-        func()
-    except (EOFError, KeyboardInterrupt):
-        print("")
-        sys.stdout.flush()
-    finally:
-        if old:
-            termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old)
+if os.path.exists("mods"):
+    sys.path.insert(0, os.getcwd())
+    import mods
+    Cfg.mod = ",".join((lsmod(mods.__path__[0])))
+else:
+    mods = None
 
 
 def main():
     parse(Cfg, " ".join(sys.argv[1:]))
-    if not Cfg.mod:
-        Cfg.mod = ",".join((lsmod(mods.__path__[0])))
-    mds = scan(mods)
-    if "d" in Cfg.opts:
-        daemon(Cfg.pidfile, "v" in Cfg.opts)
-        for mod in mds:
-            if "init" in dir(mod):
-                mod.init()
-        forever()
-        return
     if "wd" in Cfg.sets:
         Storage.wd = Cfg.wd
-    if "c" in Cfg.opts:
-        if "x" not in Cfg.opts:
-            Censor.output = print
-        if "v" in Cfg.opts:
-            dte = time.ctime(time.time()).replace("  ", " ")
-            print(f"{Cfg.name.upper()} {Cfg.opts.upper()} started {dte} ")
-        for mod in mds:
-            if "x" not in Cfg.opts and "init" in dir(mod):
-                mod.init()
-        csl = Console()
-        csl.start()
-        forever()
-        return
-    command(Cfg.otxt)
-    cli = CLI()
-    evn = Event()
-    evn.orig = object.__repr__(cli)
-    evn.txt = Cfg.otxt
-    parse(evn)
-    cli.dispatch(evn)
+    scan(mods)
+    cli = Cli()
+    command(Cfg.otxt, cli)
+    Errors.show()
 
 
 if __name__ == "__main__":
-    wrap(main)
-    Errors.show()
+    main()
+        

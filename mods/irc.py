@@ -22,7 +22,8 @@ import _thread
 from obj.disk   import find, last, sync
 from obj.error  import Censor, debug
 from obj.object import Default, Object, edit, fmt, keys
-from obj.run    import Broker, Commands, Event, Reactor, launch
+from obj.run    import Broker, Commands, Event, Reactor
+from obj.thread import launch
 
 
 NAME = sys.argv[0].rsplit(os.sep, maxsplit=1)[-1]
