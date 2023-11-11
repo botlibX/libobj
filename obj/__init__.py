@@ -3,7 +3,7 @@
 #
 
 
-"the python3 bot namespace"
+"a clean namespace"
 
 
 from .spec import *

@@ -19,7 +19,7 @@ from urllib.parse import quote_plus, urlencode
 
 
 from bot import Default, Object, fmt, update
-from bot import Broker, Cfg, Repeater, launch
+from bot import Broker, Repeater, launch
 from bot import find, fntime, laps, last, sync
 
 
@@ -28,6 +28,8 @@ def init():
     fetcher.start()
     return fetcher
 
+
+DEBUG = False
 
 fetchlock = _thread.allocate_lock()
 
@@ -153,7 +155,7 @@ class Parser(Object):
 
 
 def getfeed(url, item):
-    if Cfg.debug:
+    if DEBUG:
         return [Object(), Object()]
     try:
         result = geturl(url)

@@ -12,17 +12,18 @@ import os
 import queue
 import socket
 import ssl
+import sys
 import textwrap
 import threading
 import time
 import _thread
 
 
-from bot import Broker, Censor, Cfg, Commands, Default, Event, Object, Reactor
+from bot import Broker, Censor, Commands, Default, Event, Object, Reactor
 from bot import debug, edit, find, fmt, keys, last, launch, sync
 
 
-NAME = Cfg.name
+NAME = sys.argv[0].split(os.sep)[-1].lower()
 
 
 Censor.words = ["PING", "PONG", "PRIVMSG"]

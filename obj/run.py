@@ -40,10 +40,6 @@ def __dir__():
     )
 
 
-Cfg = Default()
-Cfg.name = __file__.split(os.sep)[-2].lower()
-
-
 class Event(Default):
 
     def __init__(self):
