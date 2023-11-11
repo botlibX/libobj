@@ -9,8 +9,6 @@ DESCRIPTION
 
 ::
 
-
-
    LIBOBJ is a python3 library providing all the tools to create a
    unix command line program, such as disk perisistence for
    configuration files, event handler to handle the client/server
@@ -45,7 +43,7 @@ AUTHOR
 
 ::
 
-  libbot <libbotx@gmail.com>
+   libbot <libbotx@gmail.com>
 
 
 COPYRIGHT
