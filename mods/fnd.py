@@ -9,8 +9,8 @@
 import time
 
 
-from bot import Storage, find, fntime, laps
-from bot import fmt, keys
+from obj.disk   import Storage, find, fntime, laps
+from obj.object import fmt, keys
 
 
 def fnd(event):

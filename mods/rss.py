@@ -18,7 +18,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
 
 
-from obj.disk   import find, last
+from obj.disk   import find, fntime, laps, last, sync
 from obj.object import Default, Object, fmt, update
 from obj.thread import Repeater, launch
 

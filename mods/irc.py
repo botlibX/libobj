@@ -28,7 +28,7 @@ from obj.thread import launch
 from .run import Broker, Commands, Event, Reactor
 
 
-NAME = sys.argv[0].split(os.sep)[-1].lower()
+NAME = sys.argv[0].rsplit(os.sep, maxsplit=1)[-1]
 
 
 Censor.words = ["PING", "PONG", "PRIVMSG"]
