@@ -15,9 +15,6 @@ from .object import Object, cdir, read, write
 from .object import Default, fqn, ident, search, update
 
 
-"defines"
-
-
 def __dir__():
     return (
         'Storage',
@@ -30,9 +27,6 @@ def __dir__():
         'strip',
         'sync'
     )
-
-
-"storage"
 
 
 class Storage(Object):
@@ -183,9 +177,6 @@ def laps(seconds, short=True) -> str:
 
 def strip(pth, nmr=3) -> str:
     return os.sep.join(pth.split(os.sep)[-nmr:])
-
-
-"methods"
 
 
 def fetch(obj, pth) -> None:

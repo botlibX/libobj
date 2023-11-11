@@ -24,8 +24,7 @@ from obj.disk   import Storage, laps
 from obj.error  import Censor
 from obj.object import Default, Object, keys
 from obj.run   import CLI, Commands, Event
-from obj.run   import lsmod, parse, scan
-from obj.thread import launch
+from obj.run   import launch, lsmod, parse, scan
 
 
 STARTTIME = time.time()
