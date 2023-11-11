@@ -13,6 +13,9 @@ import types
 import _thread
 
 
+from .error import Errors
+
+
 class Thread(threading.Thread):
 
     def __init__(self, func, thrname, *args, daemon=True, **kwargs):

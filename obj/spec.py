@@ -9,27 +9,19 @@
 from .disk   import *
 from .error  import *
 from .object import *
-from .run    import *
 from .thread import *
 
 def __dir__():
     return (
-        'Broker',
         'Censor',
-        'Commands',
-        'Cfg',
-        'CLI',
         'Default',
         'Errors',
-        'Event',
         'Object',
-        'Reactor',
         'Repeater',
         'Storage',
         'Thread',
         'Timer',
         'cdir',
-        'command',
         'construct',
         'debug',
         'dump',
@@ -51,11 +43,9 @@ def __dir__():
         'launch',
         'load',
         'loads',
-        'lsmod',
         'name',
         'parse',
         'read',
-        'scan',
         'search',
         'spl',
         'strip',
