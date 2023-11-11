@@ -22,9 +22,12 @@ sys.path.insert(0, os.getcwd())
 
 from bot.disk   import Storage, laps
 from bot.error  import Censor
-from bot.object import Object, keys
-from bot.run    import Cfg, CLI, Commands, Event
-from bot.run    import launch, lsmod, parse, scan
+from bot.object import Default, Object, keys
+from bot.thread import launch
+
+
+from mods.run   import CLI, Commands, Event
+from mods.run   import lsmod, parse, scan
 
 
 STARTTIME = time.time()
@@ -36,6 +39,7 @@ else:
     modules = None
 
 
+Cfg = Default()
 Cfg.debug = True
 Cfg.mod = ",".join(lsmod(modules.__path__[0]))
 Cfg.name = "tinder"

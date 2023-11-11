@@ -10,6 +10,7 @@
 import getpass
 import os
 import pwd
+import readline
 import sys
 import termios
 import time
@@ -18,8 +19,13 @@ import time
 sys.path.insert(0, os.getcwd())
 
 
-from bot import Censor, CLI, Commands, Default, Errors, Event, Reactor, Storage
-from bot import cdir, command, debug, forever, parse,  lsmod, scan
+from obj.disk   import Storage
+from obj.object import Default, cdir
+from obj.error  import Censor, Errors, debug
+from obj.thread import forever
+
+from mods.run import CLI, Commands, Event, Reactor
+from mods.run import command, parse,  lsmod, scan
 
 
 if os.path.exists("mods"):

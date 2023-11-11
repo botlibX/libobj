@@ -9,8 +9,8 @@
 import time
 
 
-from bot import find, fntime, laps, sync
-from bot import Object
+from obj.disk   import find, fntime, laps, sync
+from obj.object import Object
 
 
 class Todo(Object):

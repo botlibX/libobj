@@ -3,7 +3,7 @@
 # pylint: disable=E0603,E0402,W0401,W0614
 
 
-"the python3 bot namespace"
+"specification"
 
 
 from .disk   import *
@@ -51,7 +51,6 @@ def __dir__():
         'launch',
         'load',
         'loads',
-        'lock',
         'lsmod',
         'name',
         'parse',
@@ -65,3 +64,6 @@ def __dir__():
         'values',
         'write'
     )
+
+
+__all__ = __dir__()

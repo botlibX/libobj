@@ -4,7 +4,3 @@
 
 
 "a clean namespace"
-
-
-from .spec import *
-from .spec import __dir__

@@ -19,8 +19,13 @@ import time
 import _thread
 
 
-from bot import Broker, Censor, Commands, Default, Event, Object, Reactor
-from bot import debug, edit, find, fmt, keys, last, launch, sync
+from obj.disk   import find, last, sync
+from obj.error  import Censor, debug
+from obj.object import Default, Object, edit, fmt, keys
+from obj.thread import launch
+
+
+from .run import Broker, Commands, Event, Reactor
 
 
 NAME = sys.argv[0].split(os.sep)[-1].lower()

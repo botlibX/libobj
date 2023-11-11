@@ -17,10 +17,10 @@ import types
 import _thread
 
 
-from .disk   import Storage
-from .error  import Errors
-from .object import Default, Object, spl
-from .thread import launch
+from obj.disk   import Storage
+from obj.error  import Errors
+from obj.object import Default, Object, spl
+from obj.thread import launch
 
 
 def __dir__():

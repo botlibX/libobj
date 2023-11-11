@@ -18,9 +18,12 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
 
 
-from bot import Default, Object, fmt, update
-from bot import Broker, Repeater, launch
-from bot import find, fntime, laps, last, sync
+from obj.disk   import find, last
+from obj.object import Default, Object, fmt, update
+from obj.thread import Repeater, launch
+
+
+from .run import Broker
 
 
 def init():
@@ -30,6 +33,7 @@ def init():
 
 
 DEBUG = False
+
 
 fetchlock = _thread.allocate_lock()
 

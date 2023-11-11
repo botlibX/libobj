@@ -7,6 +7,7 @@
 
 
 import io
+import traceback
 
 
 from .object import Object
