@@ -7,7 +7,6 @@
 
 
 import inspect
-import os
 import queue
 import threading
 import time
@@ -19,6 +18,7 @@ from obj.disk   import Storage
 from obj.error  import Errors
 from obj.object import Default, Object, spl
 from obj.parse  import parse
+from obj.thread import launch
 
 
 def __dir__():
@@ -32,7 +32,7 @@ def __dir__():
         'Reactor',
         'command',
         'debug',
-        'lsmod',
+        'forever',
         'scan'
     )
 
@@ -125,7 +125,8 @@ class Commands(Object):
             evt.show()
         except Exception as exc:
             Errors.add(exc)
-
+        evt.ready()
+ 
     def dosay(self, txt):
         raise NotImplementedError("Commands.dosay")
 
@@ -152,7 +153,7 @@ class Reactor(Object):
         if not func:
             evt.ready()
             return
-        evt._thr = launch(func, evt)
+        evt._thrs.append(launch(func, evt))
 
     def loop(self) -> None:
         while not self.stopped.is_set():
@@ -187,7 +188,7 @@ class CLI(Reactor):
         pass
 
     def dispatch(self, evt):
-        Commands.dispatch(evt)
+        return Commands.dispatch(evt)
 
     def dosay(self, channel, txt):
         raise NotImplementedError("CLI.dosay")
@@ -200,26 +201,22 @@ def command(txt, clt=None):
     evn.txt = txt
     parse(evn)
     cli.dispatch(evn)
+    evn.wait()
     return evn
 
 
-def lsmod(path) -> []:
-    if not os.path.exists(path):
-        return {}
-    for fnm in os.listdir(path):
-        if not fnm.endswith(".py"):
-            continue
-        if fnm in ["__main__.py", "__init__.py"]:
-            continue
-        yield fnm[:-3]
+def forever():
+    while 1:
+        try:
+            time.sleep(1.0)
+        except:
+            _thread.interrupt_main()
 
 
-def scan(pkg, mnames=None) -> []:
+def scan(pkg, mnames, init=False) -> []:
     res = []
     if not pkg:
         return res
-    if mnames is None:
-        mnames = ",".join(lsmod(pkg.__path__[0]))
     for mname in spl(mnames):
         module = getattr(pkg, mname, None)
         if not module:
@@ -227,4 +224,14 @@ def scan(pkg, mnames=None) -> []:
         Commands.scan(module)
         Storage.scan(module)
         res.append(module)
+        if init and "init" in dir(module):
+            module._thr = launch(module.init)
     return res
+
+
+def spl(txt) -> []:
+    try:
+        res = txt.split(',')
+    except (TypeError, ValueError):
+        res = txt
+    return [x for x in res if x]

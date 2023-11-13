@@ -8,6 +8,8 @@
 
 import queue
 import threading
+import time
+import types
 
 
 from .error import Errors
@@ -46,7 +48,8 @@ class Thread(threading.Thread):
             self._result = func(*args)
         except Exception as exc:
             Errors.add(exc)
-
+            if args:
+                args[0].ready()
 
 class Timer:
 
@@ -90,15 +93,6 @@ class Repeater(Timer):
         thr = launch(self.start)
         super().run()
         return thr
-
-
-def forever():
-    while 1:
-        try:
-            time.sleep(1.0)
-        except:
-            _thread.interrupt_main()
-
 
 
 def launch(func, *args, **kwargs) -> Thread:

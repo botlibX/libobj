@@ -6,13 +6,18 @@
 "storage"
 
 
+import datetime
 import inspect
 import os
+import pathlib
 import time
+import _thread
 
 
-from .object import Object, cdir, read, write
-from .object import Default, fqn, ident, search, update
+from .object import Object, Default, dump, fqn, load, search, update
+
+
+lock = _thread.allocate_lock()
 
 
 def __dir__():
@@ -24,6 +29,7 @@ def __dir__():
         'fntime',
         'laps',
         'last',
+        'lsmod',
         'strip',
         'sync'
     )
@@ -91,7 +97,9 @@ class Storage(Object):
             Storage.add(clz)
 
 
-"utilities"
+def cdir(pth) -> None:
+    pth = pathlib.Path(pth)
+    os.makedirs(pth, exist_ok=True)
 
 
 def find(mtc, selector=None, index=None) -> []:
@@ -136,6 +144,13 @@ def fntime(daystr) -> float:
     return timed
 
 
+def ident(obj) -> str:
+    return os.path.join(
+                        fqn(obj),
+                        os.path.join(*str(datetime.datetime.now()).split())
+                       )
+
+
 def laps(seconds, short=True) -> str:
     txt = ""
     nsec = float(seconds)
@@ -175,6 +190,17 @@ def laps(seconds, short=True) -> str:
     return txt
 
 
+def lsmod(path) -> []:
+    if not os.path.exists(path):
+        return {}
+    for fnm in os.listdir(path):
+        if not fnm.endswith(".py"):
+            continue
+        if fnm in ["__main__.py", "__init__.py"]:
+            continue
+        yield fnm[:-3]
+
+
 def strip(pth, nmr=3) -> str:
     return os.sep.join(pth.split(os.sep)[-nmr:])
 
@@ -198,9 +224,22 @@ def last(obj, selector=None) -> None:
         return inp[0]
 
 
+def read(obj, pth) -> None:
+    with lock:
+        with open(pth, 'r', encoding='utf-8') as ofile:
+            update(obj, load(ofile))
+
+
 def sync(obj, pth=None) -> str:
     if pth is None:
         pth = ident(obj)
     pth2 = Storage.store(pth)
     write(obj, pth2)
     return pth
+
+
+def write(obj, pth) -> None:
+    with lock:
+        cdir(os.path.dirname(pth))
+        with open(pth, 'w', encoding='utf-8') as ofile:
+            dump(obj, ofile)

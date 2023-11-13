@@ -10,6 +10,8 @@ from .disk   import *
 from .error  import *
 from .object import *
 from .run    import *
+from .thread import *
+
 
 def __dir__():
     return (
@@ -67,4 +69,3 @@ def __dir__():
         'values',
         'write'
     )
-

@@ -29,11 +29,7 @@ this package is a Work In Progress (WIP).
 """
 
 
-import datetime
-import os
-import pathlib
 import json
-import _thread
 
 
 def __dir__():
@@ -53,9 +49,6 @@ def __dir__():
             'values',
             'write'
            )
-
-
-lock = _thread.allocate_lock()
 
 
 class Object:
@@ -175,18 +168,6 @@ def dumps(*args, **kw) -> str:
     return json.dumps(*args, **kw)
 
 
-def write(obj, pth) -> None:
-    with lock:
-        cdir(os.path.dirname(pth))
-        with open(pth, 'w', encoding='utf-8') as ofile:
-            dump(obj, ofile)
-
-
-def cdir(pth) -> None:
-    pth = pathlib.Path(pth)
-    os.makedirs(pth, exist_ok=True)
-
-
 def spl(txt) -> []:
     try:
         res = txt.split(',')
@@ -256,13 +237,6 @@ def fqn(obj) -> str:
     if kin == "type":
         kin = obj.__name__
     return kin
-
-
-def ident(obj) -> str:
-    return os.path.join(
-                        fqn(obj),
-                        os.path.join(*str(datetime.datetime.now()).split())
-                       )
 
 
 def items(obj) -> []:

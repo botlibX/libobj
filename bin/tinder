@@ -20,11 +20,11 @@ import _thread
 sys.path.insert(0, os.getcwd())
 
 
-from obj.disk   import Storage, laps
+from obj.disk   import Storage, laps, lsmod
 from obj.error  import Censor
 from obj.object import Default, Object, keys
 from obj.run   import CLI, Commands, Event
-from obj.run   import launch, lsmod, parse, scan
+from obj.run   import launch, parse, scan
 
 
 STARTTIME = time.time()

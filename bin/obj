@@ -9,41 +9,77 @@
 
 import os
 import sys
+import termios
+import time
+
+
+sys.path.insert(0, os.getcwd())
 
 
 from obj import CLI, Commands, Default, Errors, Event, Storage
-from obj import command, parse,  lsmod, scan
+from obj import command, forever, parse,  lsmod, scan
+
+
+import mods
 
 
 Cfg = Default()
 Cfg.name = __file__.rsplit(os.sep, maxsplit=1)[-1].lower()
 Storage.wd = os.path.expanduser(f"~/.{Cfg.name}")
 
-class Cli(CLI, Commands):
+
+class CLI(CLI):
 
     def dosay(self, channel, txt):
         print(txt.encode('utf-8', 'replace').decode())
         sys.stdout.flush()
 
 
-if os.path.exists("mods"):
-    sys.path.insert(0, os.getcwd())
-    import mods
-    Cfg.mod = ",".join((lsmod(mods.__path__[0])))
-else:
-    mods = None
+class Console(CLI):
+
+
+    def poll(self) -> Event:
+        evt = Event()
+        evt.orig = object.__repr__(self)
+        evt.txt = input("> ")
+        evt.type = "command"
+        return evt
+
+
+def wrap(func) -> None:
+    old = None
+    try:
+        old = termios.tcgetattr(sys.stdin.fileno())
+    except termios.error:
+        pass
+    try:
+        func()
+    except (EOFError, KeyboardInterrupt):
+        print("")
+        sys.stdout.flush()
+    finally:
+        if old:
+            termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old)
 
 
 def main():
     parse(Cfg, " ".join(sys.argv[1:]))
-    if "wd" in Cfg.sets:
-        Storage.wd = Cfg.wd
-    scan(mods)
-    cli = Cli()
+    if "v" in Cfg.opts:
+        dte = time.ctime(time.time()).replace("  ", " ")
+        print(f"{Cfg.name.upper()} started {Cfg.opts.upper()} started {dte}")
+    if os.path.exists("mods"):
+        import mods
+        Cfg.mod = ",".join((lsmod(mods.__path__[0])))
+        scan(mods, Cfg.mod)
+    if 'c' in Cfg.opts:
+        csl = Console()
+        csl.start()
+        forever()
+    cli = CLI()
     command(Cfg.otxt, cli)
     Errors.show()
 
 
 if __name__ == "__main__":
-    main()
+    wrap(main)
         
