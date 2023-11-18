@@ -22,7 +22,7 @@ SYNOPSIS
 
 ::
 
-   >>> from obj.objects import *
+   >>> from obj import Object
    >>> o = Object()
    >>> o.a = "b"
    >>> write(o, "test")

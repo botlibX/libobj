@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C0103,C0115,C0116,C0209,C0413,W0201,R0903,W0212,W0105,W0613
+# pylint: disable=C,R,W0201,W0212,W0105,W0613,W0406,W0611,E0102
 
 
 "program"
 
 
+import getpass
 import os
+import pwd
+import readline
 import sys
 import termios
 import time
@@ -16,27 +19,35 @@ import time
 sys.path.insert(0, os.getcwd())
 
 
-from obj import CLI, Commands, Default, Errors, Event, Storage
-from obj import command, forever, parse,  lsmod, scan
+from obj import Censor, CLI, Commands, Default, Errors, Event, Storage
+from obj import cdir, command, forever, parse, lsmod, scan
 
 
-import mods
+if os.path.exists("mods"):
+    import mods as modules
+else:
+    modules = None
 
 
-Cfg = Default()
-Cfg.name = __file__.rsplit(os.sep, maxsplit=1)[-1].lower()
-Storage.wd = os.path.expanduser(f"~/.{Cfg.name}")
+cfg = Default()
+cfg.mod = ",".join((lsmod(modules.__path__[0])))
+cfg.name    = "obj"
+Storage.wd  = os.path.expanduser(f"~/.{cfg.name}")
+cfg.pidfile = os.path.join(Storage.wd, f"{cfg.name}.pid")
+cfg.version = "530"
+cfg.user    = getpass.getuser()
 
 
 class CLI(CLI):
 
-    def dosay(self, channel, txt):
-        print(txt.encode('utf-8', 'replace').decode())
+    def say(self, channel, txt):
+        txt = txt.encode('utf-8', 'replace').decode()
+        sys.stdout.write(txt)
+        sys.stdout.write("\n")
         sys.stdout.flush()
 
 
 class Console(CLI):
-
 
     def poll(self) -> Event:
         evt = Event()
@@ -44,6 +55,43 @@ class Console(CLI):
         evt.txt = input("> ")
         evt.type = "command"
         return evt
+
+
+def daemon(pidfile, verbose=False):
+    pid = os.fork()
+    if pid != 0:
+        os._exit(0)
+    os.setsid()
+    pid2 = os.fork()
+    if pid2 != 0:
+        os._exit(0)
+    if not verbose:
+        with open('/dev/null', 'r', encoding="utf-8") as sis:
+            os.dup2(sis.fileno(), sys.stdin.fileno())
+        with open('/dev/null', 'a+', encoding="utf-8") as sos:
+            os.dup2(sos.fileno(), sys.stdout.fileno())
+        with open('/dev/null', 'a+', encoding="utf-8") as ses:
+            os.dup2(ses.fileno(), sys.stderr.fileno())
+    os.umask(0)
+    os.chdir("/")
+    if os.path.exists(pidfile):
+        os.unlink(pidfile)
+    cdir(os.path.dirname(pidfile))
+    with open(pidfile, "w", encoding="utf-8") as fds:
+        fds.write(str(os.getpid()))
+
+
+def isop(txt):
+    for char in txt:
+        if char in cfg.opts:
+            return True
+    return False
+
+
+def privileges(username):
+    pwnam = pwd.getpwnam(username)
+    os.setgid(pwnam.pw_gid)
+    os.setuid(pwnam.pw_uid)
 
 
 def wrap(func) -> None:
@@ -62,24 +110,46 @@ def wrap(func) -> None:
             termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old)
 
 
+def ver(event):
+    event.reply(f"{cfg.name.upper()} {cfg.version}")
+
+
+Commands.add(ver)
+
+
 def main():
-    parse(Cfg, " ".join(sys.argv[1:]))
-    if "v" in Cfg.opts:
+    parse(cfg, " ".join(sys.argv[1:]))
+    if isop("v"):
+        Censor.output = print
         dte = time.ctime(time.time()).replace("  ", " ")
-        print(f"{Cfg.name.upper()} started {Cfg.opts.upper()} started {dte}")
-    if os.path.exists("mods"):
-        import mods
-        Cfg.mod = ",".join((lsmod(mods.__path__[0])))
-        scan(mods, Cfg.mod)
-    if 'c' in Cfg.opts:
+        print(f"{cfg.name.upper()} started {cfg.opts.upper()} started {dte}")
+    wait = False
+    if isop("d"):
+        daemon(cfg.pidfile, isop("v"))
+        privileges(cfg.user)
+        wait = True
+    cfg.mod = ",".join((lsmod(modules.__path__[0])))
+    if isop("cd"):
+        scan(modules, cfg.mod, not isop("x"), isop("w"))
+    if isop("c"):
         csl = Console()
+        if isop("t"):
+            csl.threaded = True
         csl.start()
+        wait = True
+    if wait:
         forever()
+        return
+    scan(modules, cfg.mod)
     cli = CLI()
-    command(Cfg.otxt, cli)
+    command(cfg.otxt, cli)
+
+
+def wrapped():
+    wrap(main)
     Errors.show()
 
 
 if __name__ == "__main__":
-    wrap(main)
+    wrapped()
         
