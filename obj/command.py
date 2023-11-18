@@ -21,6 +21,9 @@ def __dir__():
     )
 
 
+__all__ = __dir__()
+
+
 class Commands(Object):
 
     cmds = Object()

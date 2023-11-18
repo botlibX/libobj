@@ -17,13 +17,14 @@ def __dir__():
             'edit',
             'fmt',
             'fqn',
-            'ident',
             'items',
             'keys',
-            'search',
             'update',
             'values',
            )
+
+
+__all__ = __dir__()
 
 
 class Object:

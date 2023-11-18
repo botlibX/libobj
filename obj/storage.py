@@ -23,6 +23,7 @@ lock = _thread.allocate_lock()
 def __dir__():
     return (
         'Storage',
+        'cdir',
         'fetch',
         'find',
         'fns',
@@ -33,6 +34,9 @@ def __dir__():
         'strip',
         'sync'
     )
+
+
+__all__ = __dir__()
 
 
 class Storage(Object):

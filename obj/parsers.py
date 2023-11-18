@@ -15,6 +15,9 @@ def __dir__():
     )
 
 
+__all__ = __dir__()
+
+
 def parse(obj, txt=None) -> None:
     args = []
     obj.args    = obj.args or []

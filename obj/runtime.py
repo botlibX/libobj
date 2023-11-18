@@ -20,18 +20,19 @@ from .message import Message
 from .parsers import parse
 from .objects import Default, Object
 from .storage import Storage, spl
-from .threads import launch
+from .threads import forever, launch
 
 
 def __dir__():
     return (
         'CLI',
-        'Message',
         'Reactor',
         'command',
-        'forever',
         'scan'
     )
+
+
+__all__ = __dir__()
 
 
 class Reactor(Object):
@@ -96,33 +97,6 @@ class CLI(Reactor):
         raise NotImplementedError("CLI.say")
 
 
-class Message(Default):
-
-    def __init__(self):
-        Default.__init__(self)
-        self._ready  = threading.Event()
-        self._thrs   = []
-        self.orig    = None
-        self.result  = []
-        self.txt     = ""
-
-    def ready(self):
-        self._ready.set()
-
-    def reply(self, txt) -> None:
-        self.result.append(txt)
-
-    def show(self) -> None:
-        for txt in self.result:
-            Broker.say(self.orig, self.channel, txt)
-
-    def wait(self):
-        for thr in self._thrs:
-            thr.join()
-        self._ready.wait()
-        return self.result
-
-
 def command(txt, clt=None):
     cli = clt or CLI()
     evn = Message()
@@ -132,14 +106,6 @@ def command(txt, clt=None):
     cli.dispatch(evn)
     evn.wait()
     return evn
-
-
-def forever():
-    while 1:
-        try:
-            time.sleep(1.0)
-        except:
-            _thread.interrupt_main()
 
 
 def scan(pkg, mnames, init=False, wait=False) -> []:

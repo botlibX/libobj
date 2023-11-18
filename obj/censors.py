@@ -20,6 +20,9 @@ def __dir__():
     )
 
 
+__all__ = __dir__()
+
+
 class Censor(Object):
 
     output = None

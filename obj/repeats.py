@@ -13,6 +13,16 @@ import time
 from .threads import Thread, launch
 
 
+def __dir__():
+    return (
+        'Repeater',
+        'Timer'
+    )
+
+
+__all__ = __dir__()
+    
+
 class Timer:
 
     def __init__(self, sleep, func, *args, thrname=None):
