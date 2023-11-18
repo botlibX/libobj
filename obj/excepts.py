@@ -10,20 +10,14 @@ import io
 import traceback
 
 
+from .censors import Censor
 from .objects import Object
 
 
-class Censor(Object):
-
-    output = None
-    words = []
-
-    @staticmethod
-    def skip(txt) -> bool:
-        for skp in Censor.words:
-            if skp in str(txt):
-                return True
-        return False
+def __dir__():
+    return (
+        'Errors',
+    )
 
 
 class Errors(Object):

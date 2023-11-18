@@ -13,8 +13,10 @@ import _thread
 
 
 from .brokers import Broker
+from .censors import Censor
 from .command import Commands
-from .excepts import Censor, Errors
+from .excepts import Errors
+from .message import Message
 from .parsers import parse
 from .objects import Default, Object
 from .storage import Storage, spl
@@ -24,7 +26,7 @@ from .threads import launch
 def __dir__():
     return (
         'CLI',
-        'Event',
+        'Message',
         'Reactor',
         'command',
         'forever',
@@ -94,7 +96,7 @@ class CLI(Reactor):
         raise NotImplementedError("CLI.say")
 
 
-class Event(Default):
+class Message(Default):
 
     def __init__(self):
         Default.__init__(self)
@@ -123,18 +125,13 @@ class Event(Default):
 
 def command(txt, clt=None):
     cli = clt or CLI()
-    evn = Event()
+    evn = Message()
     evn.orig = object.__repr__(cli)
     evn.txt = txt
     parse(evn)
     cli.dispatch(evn)
     evn.wait()
     return evn
-
-
-def debug(txt):
-    if Censor.output and not Censor.skip(txt):
-        Censor.output(txt)
 
 
 def forever():

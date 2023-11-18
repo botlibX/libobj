@@ -17,7 +17,7 @@ import time
 import _thread
 
 
-from obj import Broker, Censor, Commands, Default, Errors, Event, Object, Reactor
+from obj import Broker, Censor, Commands, Default, Errors, Message, Object, Reactor
 from obj import debug, edit, find, fmt, fntime, keys, laps, last, sync
 from obj import command, launch
 
@@ -375,7 +375,7 @@ class IRC(Reactor, Output):
         rawstr = rawstr.replace('\u0001', '')
         rawstr = rawstr.replace('\001', '')
         debug(txt)
-        obj = Event()
+        obj = Message()
         obj.args = []
         obj.rawstr = rawstr
         obj.command = ''

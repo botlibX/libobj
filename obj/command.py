@@ -15,6 +15,12 @@ from .objects import Object
 from .parsers import parse
 
 
+def __dir__():
+    return (
+        'Commands',
+    )
+
+
 class Commands(Object):
 
     cmds = Object()

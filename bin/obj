@@ -19,7 +19,7 @@ import time
 sys.path.insert(0, os.getcwd())
 
 
-from obj import Censor, CLI, Commands, Default, Errors, Event, Storage
+from obj import Censor, CLI, Commands, Default, Errors, Message, Storage
 from obj import cdir, command, forever, parse, lsmod, scan
 
 
@@ -49,8 +49,8 @@ class CLI(CLI):
 
 class Console(CLI):
 
-    def poll(self) -> Event:
-        evt = Event()
+    def poll(self) -> Message:
+        evt = Message()
         evt.orig = object.__repr__(self)
         evt.txt = input("> ")
         evt.type = "command"

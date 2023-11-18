@@ -9,6 +9,12 @@
 from .objects import Default
 
 
+def __dir__():
+    return (
+        'parse',
+    )
+
+
 def parse(obj, txt=None) -> None:
     args = []
     obj.args    = obj.args or []

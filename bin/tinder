@@ -20,7 +20,7 @@ import _thread
 sys.path.insert(0, os.getcwd())
 
 
-from obj import Censor, CLI, Commands, Default, Event, Object, Storage
+from obj import Censor, CLI, Commands, Default, Message, Object, Storage
 from obj import keys, laps, launch, lsmod, parse, scan
 
 
@@ -104,7 +104,7 @@ def payload(clt) -> None:
         nmr = 0
         for cmnd in cmds:
             for ex in getattr(param, cmnd, [""]):
-                evt = Event()
+                evt = Message()
                 evt.orig = object.__repr__(clt)
                 evt.txt = cmnd + " " + ex
                 parse(evt)
