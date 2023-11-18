@@ -20,20 +20,17 @@ import _thread
 sys.path.insert(0, os.getcwd())
 
 
-from obj.disk   import Storage, laps, lsmod
-from obj.error  import Censor
-from obj.object import Default, Object, keys
-from obj.run   import CLI, Commands, Event
-from obj.run   import launch, parse, scan
-
-
-STARTTIME = time.time()
+from obj import Censor, CLI, Commands, Default, Event, Object, Storage
+from obj import keys, laps, launch, lsmod, parse, scan
 
 
 if os.path.exists("mods"):
     import mods as modules
 else:
     modules = None
+
+
+STARTTIME = time.time()
 
 
 Cfg = Default()
@@ -75,7 +72,9 @@ param.tdo = ["test4", ""]
 
 class CLI(CLI):
 
-    def dosay(self, channel, txt):
+    threaded = True
+
+    def say(self, channel, txt):
         if "v" not in Cfg.opts:
             return
         print(txt.encode('utf-8', 'replace').decode())
