@@ -3,7 +3,7 @@
 # pylint: disable=E0603,E0402,W0401,W0614
 
 
-"specifications"
+"library"
 
 
 from .brokers import *
@@ -14,7 +14,6 @@ from .objects import *
 from .parsers import *
 from .runtime import *
 from .threads import *
-from .utility import *
 
 
 def __dir__():
@@ -27,8 +26,6 @@ def __dir__():
         'Errors',
         'Event',
         'Object',
-        'ObjectDecoder',
-        'ObjectEncoder',
         'Reactor',
         'Repeater',
         'Storage',
@@ -38,7 +35,6 @@ def __dir__():
         'command',
         'construct',
         'debug',
-        'disk',
         'dump',
         'dumps',
         'edit',
@@ -61,7 +57,6 @@ def __dir__():
         'loads', 
         'lsmod',
         'name',
-        'object',
         'parse',
         'read',
         'scan',
