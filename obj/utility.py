@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-#
+# pylint: disable=C,R
 
 
 "core utilities"
@@ -36,7 +36,7 @@ def forever():
         try:
             time.sleep(1.0)
         except (KeyboardInterrupt, EOFError):
-           _thread.interrupt_main()
+            _thread.interrupt_main()
 
 
 def name(obj) -> str:
