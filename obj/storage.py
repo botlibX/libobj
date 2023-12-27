@@ -1,6 +1,6 @@
 # This file is placed in the Public Domain.
 #
-# pylint: disable=C,R,W0105,E0402,W0611
+# pylint: disable=C,R,W0105,E0402
 
 
 "directory of objects"
@@ -8,23 +8,24 @@
 
 import datetime
 import os
-import time
+import _thread
 
 
-from .  import Object, cdir, fqn, items, update
-from .  import read, write
-
-
-from .utility import fntime, strip
+from .object  import Object, dump, fqn, load, update
 
 
 def __dir__():
     return (
         'Storage',
+        'read',
+        'write'
     )
 
 
 __all__ = __dir__()
+
+
+lock = _thread.allocate_lock()
 
 
 class Storage(Object):
@@ -40,11 +41,7 @@ class Storage(Object):
         Storage.classes[name] = clz
 
     @staticmethod
-    def files() -> []:
-        return os.listdir(Storage.store())
-
-    @staticmethod
-    def fns(mtc) -> []:
+    def fns(mtc="") -> []:
         dname = ''
         pth = Storage.store(mtc)
         for rootdir, dirs, _files in os.walk(pth, topdown=False):
@@ -65,29 +62,66 @@ class Storage(Object):
                 res = named
                 break
         if "." not in res:
-            for fnm in Storage.files():
+            for fnm in Storage.types():
                 claz = fnm.split(".")[-1]
                 if fnm == claz.lower():
                     res = fnm
         return res
 
     @staticmethod
-    def mods() -> str:
-        pth =  Storage.path("mods")
-        cdir(pth)
-        return pth
-
-    @staticmethod
-    def path(pth) -> str:
-        if not pth:
-            pth = ""
-        pth2 =  os.path.join(Storage.wd, pth)
-        cdir(pth2)
-        return pth2
+    def skel():
+        cdir(os.path.join(Storage.wd, "store", ""))
 
     @staticmethod
     def store(pth="") -> str:
-        pth = os.path.join(Storage.wd, "store", pth)
-        pth2 = os.path.dirname(pth)
-        cdir(pth2)
-        return pth
+        return os.path.join(Storage.wd, "store", pth)
+
+    @staticmethod
+    def types() -> []:
+        return os.listdir(Storage.store())
+
+
+def fetch(obj, pth) -> None:
+    with lock:
+        with open(pth, 'r', encoding='utf-8') as ofile:
+            update(obj, load(ofile))
+
+
+def ident(obj) -> str:
+    return os.path.join(
+                        fqn(obj),
+                        os.path.join(*str(datetime.datetime.now()).split())
+                       )
+
+def read(obj, pth) -> None:
+    pth2 = Storage.store(pth)
+    fetch(obj, pth2)
+    return strip(pth)
+
+
+def write(obj, pth=None) -> str:
+    if pth is None:
+        pth = ident(obj)
+    pth2 = Storage.store(pth)
+    sync(obj, pth2)
+    return pth
+
+
+def sync(obj, pth) -> None:
+    with lock:
+        cdir(os.path.dirname(pth))
+        with open(pth, 'w', encoding='utf-8') as ofile:
+            dump(obj, ofile)
+
+
+"utility"
+
+
+def cdir(pth) -> None:
+    pth = pathlib.Path(pth)
+    os.makedirs(pth, exist_ok=True)
+
+
+def strip(pth, nmr=3) -> str:
+    return os.sep.join(pth.split(os.sep)[-nmr:])
+

@@ -3,10 +3,10 @@
 # pylint: disable=C,R
 
 
-"default values"
+"default"
 
 
-from . import Object
+from .object import Object
 
 
 def __dir__():
