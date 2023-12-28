@@ -11,12 +11,14 @@ from . import default, find, object, storage
 
 from .default import *
 from .find    import *
+from .groups  import *
 from .object  import *
 from .storage import *
 
 
 def __dir__():
     return (
+        'Collection',
         'Default',
         'Object',
         'Storage',
