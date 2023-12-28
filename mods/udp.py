@@ -13,7 +13,10 @@ import threading
 import time
 
 
-from obj import Object, getmain
+from obj import Object
+
+
+from . import getmain
 
 
 Fleet = getmain("Fleet")

@@ -6,7 +6,8 @@
 "list of commands"
 
 
-from obj  import getmain
+from . import getmain
+
 
 Command = getmain("Command")
 

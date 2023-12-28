@@ -6,8 +6,39 @@
 "preimport"
 
 
+import sys
+
+
+def getmain(name):
+    return getattr(sys.modules["__main__"], name, None)
+
+
+from .find    import *
+from .parse   import *
+from .storage import *
+
+
 from . import cmd, dbg, err, fnd, irc, log, mod, mre, pwd, rss, tdo, thr, tmr
 from . import mdl, req, rst, udp
+
+
+
+def __prg__():
+    return (
+        'cdir',
+        'fetch',
+        'find',
+        'fns',
+        'fntime',
+        'ident',
+        'last',
+        'parse_command',
+        'read',
+        'sync',
+        'write'
+        'Storage',
+    )
+
 
 
 def __dir__():
@@ -16,6 +47,7 @@ def __dir__():
         'dbg',
         'err',
         'fnd',
+        'getmain',
         'irc',
         'log',
         'mod',
@@ -25,11 +57,11 @@ def __dir__():
         'tdo',
         'thr',
         'tmr',
-         'mdl',
-         'req',
-         'rst',
-         'udp'
-    )
+        'mdl',
+        'req',
+        'rst',
+        'udp'
+    ) + __prg__()
 
 
 __all__ = __dir__()

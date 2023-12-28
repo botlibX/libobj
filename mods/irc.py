@@ -16,7 +16,14 @@ import time
 import _thread
 
 
-from obj import Default, Object, edit, fmt, getmain, keys, last, write
+from obj import Default, Object, edit, fmt, keys
+
+
+from .find    import last
+from .storage import write
+
+
+from . import getmain
 
 
 Client  = getmain("Client")

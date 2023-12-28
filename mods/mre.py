@@ -3,7 +3,7 @@
 # pylint: disable=C,R
 
 
-from obj import getmain
+from . import getmain
 
 
 byorig = getmain("byorig")

@@ -11,7 +11,13 @@ import datetime
 import time
 
 
-from obj import Object, construct, getmain, keys, laps
+from obj import Object, construct, keys
+
+
+from .parse import laps
+
+
+from . import getmain
 
 
 Event  = getmain("Event")

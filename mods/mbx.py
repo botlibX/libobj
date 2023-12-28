@@ -11,7 +11,7 @@ import os
 import time
 
 
-from obj import Object, Storage, fmt, fntime, laps, write, update
+from obj import Object, find, fntime, write, update
 
 
 bdmonths = ['Bo', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -38,9 +38,6 @@ class Email(Object):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.text = ""
-
-
-Persist.add(Email)
 
 
 def to_date(date):
@@ -84,7 +81,7 @@ def cor(event):
         event.reply("cor <email>")
         return
     nr = -1
-    for _fn, email in Persist.find("email", {"From": event.args[0]}):
+    for _fn, email in find("email", {"From": event.args[0]}):
         nr += 1
         txt = ""
         if len(event.args) > 1:
@@ -100,7 +97,7 @@ def eml(event):
         event.reply("eml <searchtxtinemail>")
         return
     nr = -1
-    for fn, o in Persist.find("email"):
+    for fn, o in find("email"):
         if event.rest in o.text:
             nr += 1
             event.reply("%s %s %s" % (nr, prt(o, "From,Subject"), elapsed(time.time() - fntime(fn))))

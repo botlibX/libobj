@@ -14,7 +14,13 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
-from obj import Default, Object, Storage, getmain
+from obj import Default, Object
+
+
+from .storage import Storage
+
+
+from . import getmain
 
 
 Error = getmain("Error")

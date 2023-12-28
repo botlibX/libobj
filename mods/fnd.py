@@ -6,7 +6,11 @@
 "locate"
 
 
-from obj import Storage, fmt, find
+from obj import fmt
+
+
+from .find    import find
+from .storage import Storage
 
 
 def fnd(event):

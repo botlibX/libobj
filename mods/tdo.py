@@ -9,7 +9,11 @@
 import time
 
 
-from obj import Object, fntime, find, laps, write
+from obj import Object
+
+from .find    import find
+from .parse   import fntime, laps
+from .storage import  write
 
 
 class NoDate(Exception):

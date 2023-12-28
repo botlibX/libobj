@@ -18,8 +18,15 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
 
 
-from obj import Default, Object, getmain
-from obj import fmt, fntime, find, laps, last, update, write
+from obj import Default, Object, fmt, update
+
+
+from .find    import fntime, find, last
+from .parse   import laps
+from .storage import write
+
+
+from . import getmain
 
 
 Fleet    = getmain("Fleet")

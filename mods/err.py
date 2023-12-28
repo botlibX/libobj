@@ -6,7 +6,7 @@
 "status of bots"
 
 
-from obj import getmain
+from . import getmain
 
 
 Fleet = getmain("Fleet")
