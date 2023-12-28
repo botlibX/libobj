@@ -13,6 +13,7 @@ from .default import *
 from .find    import *
 from .groups  import *
 from .object  import *
+from .parse   import *
 from .storage import *
 
 
@@ -40,6 +41,7 @@ def __dir__():
         'last',
         'load',
         'loads', 
+        'parse_command',
         'read',
         'search',
         'sync',

@@ -7,6 +7,7 @@
 
 
 import json
+import sys
 
 
 def __dir__():
@@ -18,6 +19,7 @@ def __dir__():
             'edit',
             'fmt',
             'fqn',
+            'getmain',
             'items',
             'keys',
             'load',
@@ -28,6 +30,10 @@ def __dir__():
 
 
 __all__ = __dir__()
+
+
+def getmain(name):
+    return getattr(sys.modules["__main__"], name, None)
 
 
 class Object:

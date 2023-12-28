@@ -7,6 +7,7 @@
 
 
 import datetime
+import os
 import re
 import time as ttime
 
@@ -66,7 +67,7 @@ def fntime(daystr) -> float:
         datestr, rest = datestr.rsplit('.', 1)
     else:
         rest = ''
-    timed = time.mktime(time.strptime(datestr, '%Y-%m-%d %H:%M:%S'))
+    timed = ttime.mktime(ttime.strptime(datestr, '%Y-%m-%d %H:%M:%S'))
     if rest:
         timed += float('.' + rest)
     return timed
